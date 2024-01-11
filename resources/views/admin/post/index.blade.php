@@ -116,11 +116,6 @@
                                         <a href="{{ url('/admin/post/view/'.$post->id.'?city='.request('city')) }}"><i class='fa-solid fa-eye text-primary'></i></a>&nbsp;
                                         @endif
                                     </span>
-                                    {{--  <span class='action'>
-                                    (Auth::user()->is_update) ? "<a href='/admin/post/add/".$row->id."?city=$city'><i class='fa-solid text-success fa-pen-to-square'></i></a>&nbsp;"
-                                    (Auth::user()->is_delete) ? "<a href='/admin/post/delete/".$row->id."?city=$city' onclick='return confirm(`Are you Sure`)' ><i class='fa-solid fa-trash text-danger'></i></a>"
-                                    (Auth::user()->is_view) ? "<a href='/admin/post/view/".$row->id."?city=$city'><i class='fa-solid fa-eye text-primary'></i></a>&nbsp;"
-                                    </span>  --}}
                                 </td>
                             </tr>
                             @endforeach

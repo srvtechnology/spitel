@@ -82,7 +82,9 @@
                                 <td>
                                     {{ $row->phone_no }}
                                 </td>
-                                <td>{{ date("d-m-Y", strtotime($row->date_of_birth)) }}</td>
+                                {{--  <td>{{ date("d-m-Y", strtotime($row->date_of_birth)) }}</td>  --}}
+                                <td>{{ $row->date_of_anniversary }}</td>
+                                {{--  <td>{{ date("Y").'-'.date("m-d",strtotime($row->date_of_anniversary)) }}</td>  --}}
                             </tr>
                             @endforeach
 

@@ -21,16 +21,16 @@ class AnniversaryController extends Controller
 	        $from_day = $request->from_day;
 	        $from_month = $request->from_month;
 	        $to_day = $request->to_day;
-	        $to_month = $request->to_month;        	
+	        $to_month = $request->to_month;
         } else {
 	        $from_day = date("d", strtotime($filter_from));
 	        $from_month = date("m", strtotime($filter_from));
 	        $to_day = date("d", strtotime($filter_to));
 	        $to_month = date("m", strtotime($filter_to));
         }
-		
+
 		$birthday_arr = [];
-	
+
         $city = '';
         $customer = Customer::with(['surname_gautra' => function ($query) {
 								$query->select('id','name');
@@ -50,7 +50,7 @@ class AnniversaryController extends Controller
                                 ->whereDay('date_of_anniversary', '<=', $to_day);
 
         $customer = $customer->orderBy('first_name')->latest('id')->get();
-		
+
 		foreach($customer as $cust) {
 			$birthday_arr[] = [
 				'avtar_url' => $cust->avtar_url,
@@ -58,6 +58,7 @@ class AnniversaryController extends Controller
 				'middle_name' => $cust->father_husband_name,
 				'surname' => !empty($cust->surname_gautra->name) ? $cust->surname_gautra->name : '',
 				'phone_no' => $cust->phone_no,
+                // 'date_of_anniversary' => date("Y").'-'.date("m-d",strtotime($cust->date_of_anniversary)),
 				'date_of_anniversary' => $cust->date_of_anniversary,
 				'id' => $cust->id
 			];
@@ -83,7 +84,7 @@ class AnniversaryController extends Controller
 
         $family_member = $family_member->orderBy('name')->latest('id')->get();
 		// dd($family_member);
-		
+
 		foreach($family_member as $fam) {
 			$birthday_arr[] = [
 				'avtar_url' => $fam->avtar_url,
@@ -91,7 +92,8 @@ class AnniversaryController extends Controller
 				'middle_name' => '',
 				'surname' => !empty($cust->surname_gautra->name) ? $cust->surname_gautra->name : '',
 				'phone_no' => $fam->phone_no,
-				'date_of_anniversary' => $fam->date_of_anniversary,
+				// 'date_of_anniversary' => date("Y").'-'.date("m-d",strtotime($fam->date_of_anniversary)),
+                'date_of_anniversary' => $fam->date_of_anniversary,
 				'id' => $fam->id
 			];
 		}

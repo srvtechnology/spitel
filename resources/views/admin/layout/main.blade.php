@@ -172,7 +172,7 @@
     <!-- importing tinymce app.js-->
     <script src="{{ asset('assets/plugins/tinymce/tinymce.min.js') }}"></script>
     <script src="{{ asset('js/app.js') }}"></script>
-    
+
     <script>
         $(document).ready(function(){
 
@@ -234,7 +234,7 @@
             document.querySelector(".select2-container--open .select2-search__field").focus()
         });
     </script>
-    
+
     @yield('scripts')
 </body>
 </html>

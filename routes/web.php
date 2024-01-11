@@ -257,6 +257,8 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
 
     // Engagement
     Route::group(['prefix' => 'engagements', 'as' => 'engagements.'], function () {
+        Route::get('/',[EngagementController::class, 'index'])->name('view');
+        Route::get('/view/{id}',[EngagementController::class, 'view'])->name('detail');
         Route::get('/create',[EngagementController::class, 'add'])->name('add');
         Route::post('/create',[EngagementController::class, 'store']);
     });
