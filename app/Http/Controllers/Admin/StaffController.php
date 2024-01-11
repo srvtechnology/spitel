@@ -16,7 +16,10 @@ class StaffController extends Controller
         if (Auth::user()->role != 1) {
             return back();
         }
-        return view('admin.staff.index');
+
+        $staff = User::latest()->paginate(10);
+
+        return view('admin.staff.index')->with(compact('staff'));
     }
 
     public function add($id = null)
@@ -67,7 +70,7 @@ class StaffController extends Controller
                             $actions = "<span class='action'>";
                             $actions .= (Auth::user()->is_update) ? "<a href='/admin/staff/add/".$row->id."'><i class='fa-solid text-success fa-pen-to-square'></i></a>&nbsp;" : "" ;
                             $actions .= (Auth::user()->is_delete) ? "<a href='/admin/staff/delete/".$row->id."' onclick='return confirm(`Are you Sure`)' ><i class='fa-solid fa-trash text-danger'></i></a>" : "";
-                            $actions .= (Auth::user()->is_view) ? "<a href='/admin/staff/view/".$row->id."'><i class='fa-solid fa-eye text-primary'></i></a>&nbsp;" : "" ; 
+                            $actions .= (Auth::user()->is_view) ? "<a href='/admin/staff/view/".$row->id."'><i class='fa-solid fa-eye text-primary'></i></a>&nbsp;" : "" ;
                             $actions .= "</span>";
                             return $actions;
                             // return "<span class='action'><a href='/admin/staff/add/".$row->id."'><i class='fa-solid text-success fa-pen-to-square'></i></a>&nbsp;<a href='/admin/staff/view/".$row->id."'><i class='fa-solid fa-eye text-primary'></i></a>&nbsp;<a href='/admin/staff/delete/".$row->id."' onclick='return confirm(`Are you Sure`)' ><i class='fa-solid fa-trash text-danger'</i></a></span>";

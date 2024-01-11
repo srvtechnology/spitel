@@ -59,10 +59,38 @@
                                 <th>Name</th>
                                 <th>Mobile no</th>
                                 <th>Anniversary Date</th>
-                                <!-- <th>Actions</th> -->
                             </tr>
                         </thead>
+                        <tbody>
+                            @foreach ($anniversary as $row)
+                            <tr>
+                                <td>{{ $row->id }}</td>
+                                <td>
+                                    @if (class_basename($row) == "Customer")
+                                        @if(!is_null($row->avtar_url)) <img src='". $row->avtar_url ."' alt='Avtar' width='120' style='border-radius: 50px;'> @else - @endif
+                                    @else
+                                    {{ (!is_null($row->avtar)) ? "<img src='". $row->avtar ."' alt='Avtar' width='120' style='border-radius: 50px;'>" : "" }}
+                                    @endif
+                                </td>
+                                <td>
+                                    @if(class_basename($row) == "Customer")
+                                         {{ $row->first_name }} {{ $row->father_husband_name }} {{ (!is_null($row->surname)) ? $row->surname->name : "" }}
+                                    @else
+                                        return $row->name;
+                                    @endif
+                                </td>
+                                <td>
+                                    {{ $row->phone_no }}
+                                </td>
+                                <td>{{ date("d-m-Y", strtotime($row->date_of_birth)) }}</td>
+                            </tr>
+                            @endforeach
+
+                        </tbody>
                     </table>
+                    <div class="d-flex justify-content-center">
+                        {{ $anniversary->appends(request()->query())->links() }}
+                    </div>
                     <div class="row mt-3 mt-3">
                         <div class="col-md-12 float-right justify-content-end align-right">
                            <!--  <div class="f-flex">
@@ -174,7 +202,11 @@
             filter_from = start.format('YYYY-MM-DD');
             filter_to = end.format('YYYY-MM-DD');
         });
-        var table = $('.anniversary-datatable').DataTable({
+
+        $('.anniversary-datatable').DataTable({
+            paging:false
+        });
+        var table = $('.anniversary-datatable_JKBDSKB').DataTable({
             processing: true,
             serverSide: true,
             ajax: {
@@ -212,7 +244,7 @@
 
         $(".submit-reason").on("click", function(){
             let reject_reason = $("#reject_reason").val();
-            
+
             if (reject_reason != '') {
                 $("#reason").val(reject_reason);
                 $("#anniversary-approved").submit();

@@ -48,9 +48,40 @@
                                 <th>Action</th>
                             </tr>
                         </thead>
+                        <tbody>
+                            @foreach ($videos as $row)
+                            <tr>
+                                <td>{{ $row->id }}</td>
+                                <td>
+                                    @if(str_contains($row->video_url, "https://www.youtube.com"))
+                                        <iframe width="350" height="200" src="{{ $row->video_url }}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                                    @else
+                                        <video width="200" height="240" controls><source src="{{ $row->video_url }}" type="video/mp4"></video>
+                                    @endif
+                                </td>
+                                <td>{{ (strlen($row->description) > 50) ? substr($row->description, 0, 50) : $row->description }}</td>
+                                <td>
+                                    <span class='action'>
+                                        @if(Auth::user()->is_update)
+                                        <a href="{{ url('/admin/video/add/'.$row->id.'?city='.request('city')) }}"><i class='fa-solid text-success fa-pen-to-square'></i></a>&nbsp;
+                                        @endif
+                                        @if(Auth::user()->is_delete)
+                                        <a href="{{ url('/admin/video/delete/'.$row->id.'?city='.request('city')) }}" onclick='return confirm("Are you sure?")'><i class='fa-solid fa-trash text-danger'></i></a>&nbsp;
+                                        @endif
+                                        @if(Auth::user()->is_view)
+                                        <a href="{{ url('/admin/video/view/'.$row->id.'?city='.request('city')) }}"><i class='fa-solid fa-eye text-primary'></i></a>&nbsp;
+                                        @endif
+                                    </span>
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
                     </table>
-                    {{--
-                    <div class="row">
+                    <div class="d-flex justify-content-center">
+                        {{ $videos->appends(request()->query())->links() }}
+                    </div>
+
+                    {{--  <div class="row">
                         @foreach($videos as $v)
                         <div class="col-md-3">
                             <iframe width="250" height="200" src="{{$v->video_url}}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
@@ -63,8 +94,7 @@
                             </p>
                         </div>
                         @endforeach
-                    </div>
-                    --}}
+                    </div>  --}}
                 </div>
             </div>
         </form>
@@ -85,8 +115,11 @@
             city_id = "{{$_GET['city']}}";
         <?php endif ?>
 
+        $('.video-datatable').DataTable({
+            paging:false
+        });
         let i = 1;
-        var table = $('.video-datatable').DataTable({
+        var table = $('.video-datatable_JKJKBKJ').DataTable({
             processing: true,
             serverSide: true,
             ajax: {

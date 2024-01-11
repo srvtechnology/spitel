@@ -14,7 +14,7 @@ class NewsCategoryController extends Controller
         if (!Auth::user()->is_view) {
             return back();
         }
-        $news_category = NewsCategory::orderBy('name', 'asc')->paginate(30);
+        $news_category = NewsCategory::orderBy('name', 'asc')->paginate(10);
 
         return view('admin.news_category.index', compact('news_category'));
     }

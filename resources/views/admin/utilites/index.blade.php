@@ -72,7 +72,40 @@
                                 <th>Actions</th>
                             </tr>
                         </thead>
+                        <tbody>
+                            @foreach($utilites as $row)
+                            <tr>
+                                <td>
+                                    <input type='checkbox' name='utilities_id[]' class='utilities_id' value='{{ $row->id }}'>
+                                </td>
+                                <td>{{ $row->id }}</td>
+                                <td><img src='{{ $row->banner_url }}' alt='Avtar' width='120' style='border-radius: 50px;'></td>
+                                <td>{{ $row->name }}</td>
+                                <td>{{ $row->phone_no }}</td>
+                                <td>{{ $row->address }}</td>
+                                <td>{{ (!is_null($row->city_id)) ? (!is_null($row->city)) ? $row->city->city : "deleted" : null }}</td>
+                                <td>
+                                    <span class='action'>
+                                        @if(Auth::user()->is_update)
+                                        <a href="{{ url('/admin/utilites/add/'.$row->id.'?city='.request('city')) }}"><i class='fa-solid text-success fa-pen-to-square'></i></a>&nbsp;
+                                        @endif
+                                        @if(Auth::user()->is_delete)
+                                        <a href="{{ url('/admin/utilites/delete/'.$row->id.'?city='.request('city')) }}" onclick='return confirm("Are you sure?")'><i class='fa-solid fa-trash text-danger'></i></a>&nbsp;
+                                        @endif
+                                        @if(Auth::user()->is_view)
+                                        <a href="{{ url('/admin/utilites/view/'.$row->id.'?city='.request('city')) }}"><i class='fa-solid fa-eye text-primary'></i></a>&nbsp;
+                                        @endif
+                                    </span>
+                                </td>
+                            </tr>
+                            @endforeach
+                            <tr></tr>
+                        </tbody>
                     </table>
+
+                    <div class="d-flex justify-content-center">
+                        {{ $utilites->appends(request()->query())->links() }}
+                    </div>
                     <div class="row mt-3 mt-3">
                         <div class="col-md-12 align-right float-right justify-content-end">
                             <div class="f-flex">
@@ -189,7 +222,11 @@
             table.draw();
         });
 
-        var table = $('.utilites-datatable').DataTable({
+        $('.utilites-datatable').DataTable({
+            paging:false
+        });
+
+        var table = $('.utilites-datatable_sakjbadbsa').DataTable({
             processing: true,
             serverSide: true,
             ajax: {
@@ -228,7 +265,7 @@
 
         $(".submit-reason").on("click", function(){
             let reject_reason = $("#reject_reason").val();
-            
+
             if (reject_reason != '') {
                 $("#reason").val(reject_reason);
                 $("#utilites-approved-form").submit();

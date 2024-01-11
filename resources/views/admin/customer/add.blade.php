@@ -50,8 +50,9 @@
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Image</label>
-                                <input type="file" name="avtar" id="avtar" class="form-control">
+                                <input type="file" name="avtar" id="avtar" class="form-control"  onchange="previewFile(this);" >
                             </div>
+
                             <div class="row img-row mb-3">
                                 <div class="img-container">
                                     <a href="javascript:void(0)" class="close-image" id="close-image-id">&times;</a>
@@ -379,7 +380,6 @@ $('#mySelect').next('.select2-container').attr('aria-hidden', 'true');
   </script>
 <script>
     $(document).ready(function(){
-
         $(".sidebar-link").removeClass('active');
         $(".customer-link").addClass('active');
 
@@ -392,6 +392,14 @@ $('#mySelect').next('.select2-container').attr('aria-hidden', 'true');
 
         @if(!is_null($customer))
             @if(!empty($customer->avtar_url))
+            @php
+            if(app()->environment() == "local")
+            {
+                $explode = explode("public/",$customer->avtar_url);
+                $avatar_url = $explode[1];
+                $customer['avtar_url'] = asset("/".$avatar_url);
+            }
+            @endphp
                 $("#preview_image").attr("src", "{{$customer->avtar_url}}");
                 $("#close-image-id").data('id', "{{$customer->id}}");
                 $(".img-row").show();
@@ -436,7 +444,7 @@ $('#mySelect').next('.select2-container').attr('aria-hidden', 'true');
             $("#native_state_id").val("{{$customer->native_state_id}}");
             $("#native_state_id").trigger("change");
             city("#native_city_id", "{{$customer->native_state_id}}", "{{$customer->native_city_id}}");
-            $("#company_firm_name").val("{{$customer->company_firm_name}}");           
+            $("#company_firm_name").val("{{$customer->company_firm_name}}");
             $("#business_pincode").val("{{$customer->business_pincode}}");
             $("#business_state_id").val("{{$customer->business_state_id}}");
             $("#designation").val("{{$customer->business_designation}}");

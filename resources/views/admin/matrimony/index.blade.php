@@ -47,7 +47,40 @@
                                 <th>Actions</th>
                             </tr>
                         </thead>
+                        <tbody>
+                            @foreach($family_members as $row)
+                            <tr>
+                                <td>{{ $row->id }}</td>
+                                <td>
+                                    @if(!is_null($row->avtar))
+                                    <img src='{{ $row->avtar }}' alt='Avtar' width='120' style='border-radius: 50px;'>
+                                    @else
+                                    -
+                                    @endif
+                                </td>
+                                <td>{{ $row->name }}</td>
+                                <td>{{ ($row->gender == 1) ? "Male" : "Female" }}</td>
+                                <td>{{ (isset($row->customer) && !is_null($row->customer)) ? $row->customer->city->city : "<span class='text text-danger'>Deleted</span>" }}</td>
+                                <td>
+                                    <span class='action'>
+                                        @if(Auth::user()->is_update)
+                                        <a href="{{ url('/admin/family-member/add/'.$row->id.'?city='.request('city')) }}"><i class='fa-solid text-success fa-pen-to-square'></i></a>&nbsp;
+                                        @endif
+                                        @if(Auth::user()->is_delete)
+                                        <a href="{{ url('/admin/family-member/delete/'.$row->id.'?city='.request('city')) }}" onclick='return confirm("Are you sure?")'><i class='fa-solid fa-trash text-danger'></i></a>&nbsp;
+                                        @endif
+                                        @if(Auth::user()->is_view)
+                                        <a href="{{ url('/admin/family-member/view/'.$row->id.'?city='.request('city')) }}"><i class='fa-solid fa-eye text-primary'></i></a>&nbsp;
+                                        @endif
+                                    </span>
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
                     </table>
+                    <div class="d-flex justify-content-center">
+                        {{ $family_members->appends(request()->query())->links() }}
+                    </div>
                     <div class="row mt-3 mt-3">
                         <div class="col-md-12 float-right justify-content-end align-right">
                             <!-- <div class="f-flex">
@@ -95,7 +128,12 @@
         @if(isset($_GET['city']) && $_GET['city'] != '')
         g_city = "{{$_GET['city']}}"
         @endif
+
         $('.matrimony-datatable').DataTable({
+            paging:false
+        });
+
+        $('.matrimony-datatable_sahvbajdbsa').DataTable({
             processing: true,
             serverSide: true,
             ajax: {
@@ -130,7 +168,7 @@
 
         $(".submit-reason").on("click", function(){
             let reject_reason = $("#reject_reason").val();
-            
+
             if (reject_reason != '') {
                 $("#reason").val(reject_reason);
                 $("#matrimony-approved-form").submit();

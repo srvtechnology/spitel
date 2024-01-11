@@ -48,7 +48,10 @@ class NewsController extends Controller
     {
         $news_category = NewsCategory::select('id', 'name')->get();
         $news_sub_category = NewsSubCategory::select('id', 'name')->get();
-        return view('admin.news.index', compact('news_category', 'news_sub_category'));
+
+        $news = News::paginate(10);
+
+        return view('admin.news.index', compact('news_category', 'news_sub_category','news'));
     }
 
     public function add(Request $request, $id = null)
@@ -136,7 +139,7 @@ class NewsController extends Controller
                             $actions = "<span class='action'>";
                             $actions .= (Auth::user()->is_update) ? "<a href='/admin/news/add/".$row->id."?city=$city'><i class='fa-solid text-success fa-pen-to-square'></i></a>&nbsp;" : "" ;
                             $actions .= (Auth::user()->is_delete) ? "<a href='/admin/news/delete/".$row->id."?city=$city' onclick='return confirm(`Are you Sure`)' ><i class='fa-solid fa-trash text-danger'></i></a>" : "";
-                            $actions .= (Auth::user()->is_view) ? "<a href='/admin/news/view/".$row->id."?city=$city'><i class='fa-solid fa-eye text-primary'></i></a>&nbsp;" : "" ; 
+                            $actions .= (Auth::user()->is_view) ? "<a href='/admin/news/view/".$row->id."?city=$city'><i class='fa-solid fa-eye text-primary'></i></a>&nbsp;" : "" ;
                             $actions .= "</span>";
                             return $actions;
                             // return "<span class='action'><a href='/admin/news/add/".$row->id."'><i class='fa-solid text-success fa-pen-to-square'></i></a>&nbsp;<a href='/admin/news/view/".$row->id."'><i class='fa-solid fa-eye text-primary'></i></a>&nbsp;<a href='/admin/news/delete/".$row->id."' onclick='return confirm(`Are you Sure`)' ><i class='fa-solid fa-trash text-danger'</i></a></span>";
@@ -148,7 +151,7 @@ class NewsController extends Controller
 
     public function store(Request $request)
     {
-        
+
         if ($request->has('id') && $request->id != '') {
             $news = News::find($request->id);
         } else {
@@ -175,12 +178,12 @@ class NewsController extends Controller
 
                 $path = "/news_banner/".$name;
                 $news->banner_url = $path;
-            } 
+            }
             else {
                 if ($request->has('youtube_url') && $request->youtube_url != "") {
                     $video_url = $request->youtube_url;
                     $video_url = str_replace('/watch?v=', '/embed/', $video_url);
-                    $news->banner_url = $video_url;               
+                    $news->banner_url = $video_url;
                 } else {
                     if (!isset($news->id)) {
                         $news->banner_url = null;
@@ -190,7 +193,7 @@ class NewsController extends Controller
         } else {
             // $news->banner_url = null;
         }
-		
+
         $news->category_id = $request->category_id;
         $news->sub_category_id = $request->child_category_id;
         $news->customer_id = 0;
@@ -205,7 +208,7 @@ class NewsController extends Controller
         }
         return redirect("/admin/news");
     }
-    
+
     public function approved(Request $request)
     {
         if ($request->has('news_ids')) {
@@ -249,7 +252,7 @@ class NewsController extends Controller
         if (!Auth::user()->is_delete) {
             return back();
         }
-        
+
         $news = News::find($id);
 
         if (!is_null($news)) {

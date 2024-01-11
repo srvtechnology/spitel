@@ -83,6 +83,7 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
             Route::get('/add/{id?}',  'form')->name('customer.add');
             Route::post('/create',  'store')->name('customer.store');
             Route::get('/list',  'customer_list')->name('customer.list');
+            Route::get('/customer-search',  'customer_search_data')->name('customer.customer_search_data');
             Route::get('/get-state/{city_id}',  'getStateByCity')->name('customer.getStateByCity');
             Route::get('/view/{id}',  'view')->name('customer.single_view');
             Route::get('/delete/{id}',  'destroy')->name('customer.delete');

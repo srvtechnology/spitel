@@ -42,7 +42,8 @@ class CutomerController extends Controller
 
     public function index(Request $request)
     {
-        $customer = Customer::with('native_city')->orderByDesc('id')->orderByDesc('avtar_url')->paginate(10);
+        $customers = Customer::with('native_city')->whereNotNull('first_name')->orderBy('id','ASC')->paginate(10);
+        // $customers = Customer::with('native_city')->orderByDesc('id')->orderByDesc('avtar_url')->get();
 
         $approved_customer = Customer::where('system_status', 1)
                                     ->whereNotNull('first_name')
@@ -57,7 +58,12 @@ class CutomerController extends Controller
 									->whereDate('end', '>=', date('Y-m-d'))
 									->where('system_status', 1)
                                     ->count();
-        return view('admin.customer.index', compact('approved_customer', 'pending_customer', 'membership_expired_customer', 'active_customer','customer'));
+        return view('admin.customer.index', compact('approved_customer', 'pending_customer', 'membership_expired_customer', 'active_customer','customers'));
+    }
+
+    public function customer_search_data(Request $request)
+    {
+        return $request;
     }
 
     public function customer_list(Request $request)
@@ -74,7 +80,7 @@ class CutomerController extends Controller
         }
 
         if ($request->has('system_status') && $request->system_status != '') {
-			
+
 			if ($request->system_status == 2) {
 				$customers = $customers->whereNotNull('date_of_expired');
 			} else if ($request->system_status == 3) {
@@ -101,7 +107,7 @@ class CutomerController extends Controller
                                     ->whereNotNull('end');
         }
 
-        $customers = $customers->latest('id')->get();		
+        $customers = $customers->latest('id')->get();
 		// dd($customers);
 
         return Datatables::of($customers)
@@ -110,7 +116,24 @@ class CutomerController extends Controller
                             return "<input type='checkbox' name='customer_ids[]' class='customer_ids' value='". $row->id ."'>";
                         })
                         ->addColumn('avtar_url', function($row){
-                            return (!is_null($row->avtar_url)) ? "<img src='". $row->avtar_url ."' alt='Avtar' width='120' style='border-radius: 50px;'>" : "";
+                            $avatar_url = $avatar_path= null;
+                            if(!empty($row->avtar_url))
+                            {
+                                $avatar_path =$row->avtar_url;
+                                if(app()->environment() == "local")
+                                {
+                                    $explode = explode("public/",$row->avtar_url);
+                                    $avatar_url = $explode[1];
+                                    $avatar_path =$avatar_url;
+                                    $row['avtar_url'] = asset("/".$avatar_url);
+                                }
+                            }
+                            if(!empty($avatar_path) AND file_exists($avatar_path))
+                            {
+                                return "<img src='". $row->avtar_url ."' alt='Avtar' width='50' style='border-radius: 50%;'>";
+                            }
+                            return "-";
+                            // return (!is_null($row->avtar_url)) ? "<img src='". $row->avtar_url ."' alt='Avtar' width='120' style='border-radius: 50px;'>" : "";
                         })
                         ->addColumn('name', function($row){
                             $surname = (!is_null($row->surname)) ? $row->surname->name : "";
@@ -202,7 +225,6 @@ class CutomerController extends Controller
 
     public function store(Request $request)
     {
-
 //        dd($request->all());
 
         // $customer = Customer::where('token', $request->token)->first();
@@ -211,7 +233,7 @@ class CutomerController extends Controller
 			$validated = Validator::make($request->all(), [
                 'phone_no' => 'required|digits:10|unique:customers,phone_no,'.$request->id,
             ]);
-			
+
 			$customer = Customer::find($request->id);
 		} else {
 			$validated = Validator::make($request->all(), [
@@ -422,6 +444,12 @@ class CutomerController extends Controller
         if ($request->has('is_family_member')) {
             return response()->json($family_memeber);
         } else {
+            if(app()->environment() == "local")
+            {
+                $explode = explode("public/",$customer->avtar_url);
+                $avatar_url = $explode[1];
+                $customer['avtar_url'] = asset("/".$avatar_url);
+            }
             return response()->json($customer);
         }
     }
@@ -436,7 +464,7 @@ class CutomerController extends Controller
 					if (file_exists(public_path().$file_url)) {
 						unlink(public_path().$file_url);
 					}
-				}                
+				}
             }
             $family_memeber->avtar = null;
             $family_memeber->save();

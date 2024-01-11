@@ -72,7 +72,44 @@
                                 <th>Actions</th>
                             </tr>
                         </thead>
+                        <tbody>
+                            @foreach ($news as $row)
+                            <tr>
+                                <td>
+                                    <input type='checkbox' name='news_ids[]' class='news_ids' value='{{ $row->id }}'>
+                                </td>
+                                <td>{{ $row->id }}</td>
+                                <td>
+                                    @if (str_contains($row->banner_url, "https://www.youtube.com"))
+                                        <iframe width="310" height="200" src="{{ $row->banner_url }}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                                    @else
+                                        <img src='{{ $row->banner_url }}' alt='News Feed' height='120px;' width='120' style='border-radius: 50px;overflow: hidden;'>
+                                    @endif
+                                </td>
+                                <td>{{ $row->name }}</td>
+                                <td>{{ date("d-m-Y", strtotime($row->date)) }}</td>
+                                <td>{{ (strlen($row->description) > 250) ? mb_convert_encoding(substr($row->description, 0, 250), 'UTF-8', 'UTF-8')."..." : mb_convert_encoding($row->description, 'UTF-8', 'UTF-8') }}</td>
+                                <td>{{ (!is_null($row->city)) ? $row->city->city : "" }}</td>
+                                <td>
+                                    <span class='action'>
+                                        @if(Auth::user()->is_update)
+                                        <a href="{{ url('/admin/news/add/'.$row->id.'?city='.request('city')) }}"><i class='fa-solid text-success fa-pen-to-square'></i></a>&nbsp;
+                                        @endif
+                                        @if(Auth::user()->is_delete)
+                                        <a href="{{ url('/admin/news/delete/'.$row->id.'?city='.request('city')) }}" onclick='return confirm("Are you sure?")'><i class='fa-solid fa-trash text-danger'></i></a>&nbsp;
+                                        @endif
+                                        @if(Auth::user()->is_view)
+                                        <a href="{{ url('/admin/news/view/'.$row->id.'?city='.request('city')) }}"><i class='fa-solid fa-eye text-primary'></i></a>&nbsp;
+                                        @endif
+                                    </span>
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
                     </table>
+                    <div class="d-flex justify-content-center">
+                        {{ $news->appends(request()->query())->links() }}
+                    </div>
                     <div class="row mt-3 mt-3">
                         <div class="col-md-12 float-right justify-content-end align-right">
                             <div class="f-flex">
@@ -189,7 +226,11 @@
             table.draw();
         });
 
-        var table = $('.customer-datatable').DataTable({
+        $('.customer-datatable').DataTable({
+            paging:false
+        });
+
+        var table = $('.customer-datatable__kjbsakjbd').DataTable({
             processing: true,
             serverSide: true,
             ajax: {
@@ -226,10 +267,10 @@
             $(".news_ids").attr("checked", status);
         });
 
-        
+
         $(".submit-reason").on("click", function(){
             let reject_reason = $("#reject_reason").val();
-            
+
             if (reject_reason != '') {
                 $("#reason").val(reject_reason);
                 $("#news_action").submit();

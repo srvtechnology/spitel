@@ -44,7 +44,35 @@
                                 <th>Actions</th>
                             </tr>
                         </thead>
+                        <tbody>
+                            @foreach ($staff as $row)
+                            <tr>
+                                <td>{{ $row->id }}</td>
+                                <td>{{$row->phone_no}}</td>
+                                <td>{{ ($row->is_insert) ? "Yes" : "No" }}</td>
+                                <td>{{ ($row->is_update) ? "Yes" : "No" }}</td>
+                                <td>{{ ($row->is_delete) ? "Yes" : "No" }}</td>
+                                <td>{{ ($row->is_view) ? "Yes" : "No" }}</td>
+                                <td>
+                                    <span class='action'>
+                                        @if(Auth::user()->is_update)
+                                        <a href="{{ url('/admin/staff/add/'.$row->id.'?city='.request('city')) }}"><i class='fa-solid text-success fa-pen-to-square'></i></a>&nbsp;
+                                        @endif
+                                        @if(Auth::user()->is_delete)
+                                        <a href="{{ url('/admin/staff/delete/'.$row->id.'?city='.request('city')) }}" onclick='return confirm("Are you sure?")'><i class='fa-solid fa-trash text-danger'></i></a>&nbsp;
+                                        @endif
+                                        @if(Auth::user()->is_view)
+                                        <a href="{{ url('/admin/staff/view/'.$row->id.'?city='.request('city')) }}"><i class='fa-solid fa-eye text-primary'></i></a>&nbsp;
+                                        @endif
+                                    </span>
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
                     </table>
+                    <div class="d-flex justify-content-center">
+                        {{ $staff->appends(request()->query())->links() }}
+                    </div>
                     <!-- <div class="row mt-3 mt-3">
                         <div class="col-md-5"></div>
                         <div class="col-md-5"></div>
@@ -72,7 +100,10 @@
 
         let i = 1;
 
-        var table = $('.staff-datatable').DataTable({
+        $('.staff-datatable').DataTable({
+            paging:false
+        });
+        var table = $('.staff-datatable_BSAKJBSKAB').DataTable({
             processing: true,
             serverSide: true,
             ajax: "{{ route('staff.list') }}",

@@ -90,84 +90,39 @@
                                     <input type="checkbox" name="check_all" id="check_all">
                                 </th>
                                 <th>ID</th>
-                                <th>Image</th>
+                                {{-- <th>Image</th> --}}
                                 <th>Name</th>
                                 <th>Phone no</th>
                                 <th>City</th>
                                 <th>Native City</th>
                                 <th>Firm name</th>
 								<th>Membership Expired Date</th>
-                                <th>Status</th>
-                                <th>View Family</th>
-                                <th>Add new Family Memeber</th>
-                                <th>Actions</th>
+                                <th>Status</th>                                
+                                {{-- <th>View Family</th>
+                                <th>Add new Family Memeber</th> --}}
+                                {{-- <th>Actions</th> --}}
                             </tr>
                         </thead>
                         <tbody>
-                            @if(count($customers) > 0)
-                            @foreach($customers as $customer)
-                            <tr>
-                                <td><input type='checkbox' name='customer_ids[]' class='customer_ids' value='{{ $customer->id }}'></td>
-                                <td>{{ $customer->id }}</td>
-                                <td>
-                                    @php
-                                    $avatar_url = $avatar_path= null;
-                                    if(!empty($customer->avtar_url))
-                                    {
-                                        $avatar_path =$customer->avtar_url;
-                                        if(app()->environment() == "local")
-                                        {
-                                            $explode = explode("public/",$customer->avtar_url);
-                                            $avatar_url = $explode[1];
-                                            $avatar_path =$avatar_url;
-                                            $customer['avtar_url'] = asset("/".$avatar_url);
-                                        }
-                                    }
-                                    @endphp
-                                    @if(!empty($avatar_path) AND file_exists($avatar_path))
-                                    <img src="{{ $customer->avtar_url }}" alt='Avtar' width='50' style='border-radius: 50%;'>
-                                    @else - @endif
-                                </td>
-                                <td>{{ $customer->first_name }} {{ $customer->father_husband_name }} {{ (!is_null($customer->surname)) ? $customer->surname->name : "" }}</td>
-                                <td>{{ $customer->phone_no }}</td>
-                                <td>{{ (!is_null($customer->city)) ? $customer->city->city : "" }}</td>
-                                <td>{{ (!is_null($customer->native_city)) ? $customer->native_city->city : "" }}</td>
-                                <td>{{ $customer->company_firm_name }}</td>
-                                <td>{{ $customer->date_of_expired ?? '-' }}</td>
-                                <td>
-                                    @if ($customer->system_status == 1)
-                                        <span class='badge badge-success' title='From:- {{ $customer->start }} End:- {{ $customer->end }}'>Approved</span>
-
-                                    @elseif($customer->system_status == 0)
-                                        <span class='badge badge-info'>Pending</span>
-
-                                    @else
-                                        <span class='badge badge-danger' title='{{ $customer->comment }}'>Reject</span>
-                                    @endif
-                                </td>
-                                <td><a href="{{ url('/admin/family-member/'.$customer->id)  }}'" class='btn btn-dark btn-sm'>View Family Member</a></td>
-                                <td><a href="{{ url('/admin/family-member/add/'.$customer->id) }}" class='btn btn-warning btn-sm'>Add Family Member</a></td>
-                                <td>
-                                    <span class='action'>
-                                        @if(Auth::user()->is_update)
-                                        <a href="{{ url('/admin/customer/add/'.$customer->id.'?city='.request('city')) }}"><i class='fa-solid text-success fa-pen-to-square'></i></a>&nbsp;
-                                        @endif
-                                        @if(Auth::user()->is_delete)
-                                        <a href="{{ url('/admin/customer/delete/'.$customer->id.'?city='.request('city')) }}" onclick='return confirm("Are you sure?")'><i class='fa-solid fa-trash text-danger'></i></a>&nbsp;
-                                        @endif
-                                        @if(Auth::user()->is_view)
-                                        <a href="{{ url('/admin/customer/view/'.$customer->id.'?city='.request('city')) }}"><i class='fa-solid fa-eye text-primary'></i></a>&nbsp;
-                                        @endif
-                                    </span>
-                                </td>
-                            </tr>
-                            @endforeach
-                            @endif
+                            @foreach ($customer as $user)
+                               <tr>
+                                {{-- {{$user}} --}}
+                                <td>{{ $user->id }}</td>
+                                <td>{{ $user->first_name }}</td>
+                                <td>{{ $user->phone_no }}</td>
+                                <td>{{ $user->city_id }}</td>
+                                <td>{{ $user->native_address }}</td>
+                                <td>{{ $user->company_firm_name }}</td>
+                                <td>{{ $user->end }}</td>
+                                <td>{{ $user->system_status }}</td>
+                                {{-- <td>{{ $user->view_member }}</td>
+                                <td>{{ $user->add_family_member }}</td> --}}
+                               </tr>
+                              @endforeach
                         </tbody>
                     </table>
-                    <div class="d-flex justify-content-center">
-                        {{ $customers->appends(request()->query())->links() }}
-                    </div>
+
+                    <span>{{$customer->links()}}</span>
                     <div class="row mt-3 mt-3">
                         <div class="col-md-12 float-right justify-content-end">
                             <div class="f-flex align-right">
@@ -279,15 +234,10 @@
         global_city = "{{$_GET['city']}}";
         @endif
 
-        $('.customer-datatable').DataTable({
-            paging: false
-        });
-
-
-
-        var table = $('.customer-datatable_SASDSA1').DataTable({
+        var table = $('.customer-datatabl').DataTable({
             processing: true,
             serverSide: true,
+            visible: false,
             ajax: {
                 "url": "{{ route('customer.list') }}",
                 "data": function(d){
@@ -334,7 +284,7 @@
 
         $(".submit-reason").on("click", function(){
             let reject_reason = $("#reject_reason").val();
-
+            
             if (reject_reason != '') {
                 $("#reason").val(reject_reason);
                 $("#approve").val(0);

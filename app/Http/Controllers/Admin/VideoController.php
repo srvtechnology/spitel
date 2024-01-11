@@ -15,7 +15,9 @@ class VideoController extends Controller
 {
     public function index(Request $request)
     {
-        return view('admin.video.index');
+        $videos = Video::orderByDesc('id')->paginate(10);
+
+        return view('admin.video.index')->with(compact('videos'));
     }
 
     public function list(Request $request)
@@ -46,7 +48,7 @@ class VideoController extends Controller
                             $actions = "<span class='action'>";
                             $actions .= (Auth::user()->is_update) ? "<a href='/admin/video/add/".$row->id."?city=$city'><i class='fa-solid text-success fa-pen-to-square'></i></a>&nbsp;" : "" ;
                             $actions .= (Auth::user()->is_delete) ? "<a href='/admin/video/delete/".$row->id."?city=$city' onclick='return confirm(`Are you Sure`)' ><i class='fa-solid fa-trash text-danger'></i></a>" : "";
-                            $actions .= (Auth::user()->is_view) ? "<a href='/admin/video/view/".$row->id."?city=$city'><i class='fa-solid fa-eye text-primary'></i></a>&nbsp;" : "" ; 
+                            $actions .= (Auth::user()->is_view) ? "<a href='/admin/video/view/".$row->id."?city=$city'><i class='fa-solid fa-eye text-primary'></i></a>&nbsp;" : "" ;
                             $actions .= "</span>";
                             return $actions;
                             // return "<span class='action'><a href='/admin/profile/add/".$row->id."'><i class='fa-solid text-success fa-pen-to-square'></i></a>&nbsp;<a href='/admin/profile/view/".$row->id."'><i class='fa-solid fa-eye text-primary'></i></a>&nbsp;<a href='/admin/profile/delete/".$row->id."' onclick='return confirm(`Are you Sure`)' ><i class='fa-solid fa-trash text-danger'</i></a></span>";
@@ -83,7 +85,7 @@ class VideoController extends Controller
     }
 
     public function create(Request $request)
-    {  
+    {
         $video = new Video;
 
         if ($request->has('id') && $request->id != '') {
@@ -110,7 +112,7 @@ class VideoController extends Controller
             if (is_null($video->id)) {
                 $video_url = $request->video_url;
                 $video_url = str_replace('/watch?v=', '/embed/', $video_url);
-                $video->video_url = $video_url;               
+                $video->video_url = $video_url;
             }
         }
 

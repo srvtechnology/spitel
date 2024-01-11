@@ -21,7 +21,10 @@ class UtilitesController extends Controller
     {
         $category = UtilitiesCategory::select('id', 'name')->get();
         $sub_category = UtilitiesSubCategory::select('id', 'name')->get();
-    	return view('admin.utilites.index', compact('category', 'sub_category'));
+
+        $utilites = Utilites::orderBy('id', 'DESC')->paginate(10);
+
+    	return view('admin.utilites.index', compact('category', 'sub_category','utilites'));
     }
 
     public function utilites_list(Request $request)
@@ -52,7 +55,7 @@ class UtilitesController extends Controller
         }
 
         if ($request->has('sub_category') && $request->sub_category != "") {
-            $utilites = $utilites->where('sub_category_id', $request->sub_category);   
+            $utilites = $utilites->where('sub_category_id', $request->sub_category);
         }
 
         // $utilites = $utilites->whereDate('created_at', '>=', $filter_from)
@@ -84,7 +87,7 @@ class UtilitesController extends Controller
                             $actions = "<span class='action'>";
                             $actions .= (Auth::user()->is_update) ? "<a href='/admin/utilites/add/".$row->id."?city=$city'><i class='fa-solid text-success fa-pen-to-square'></i></a>&nbsp;" : "" ;
                             $actions .= (Auth::user()->is_delete) ? "<a href='/admin/utilites/delete/".$row->id."?city=$city' onclick='return confirm(`Are you Sure`)' ><i class='fa-solid fa-trash text-danger'></i></a>" : "";
-                            $actions .= (Auth::user()->is_view) ? "<a href='/admin/utilites/view/".$row->id."?city=$city'><i class='fa-solid fa-eye text-primary'></i></a>&nbsp;" : "" ; 
+                            $actions .= (Auth::user()->is_view) ? "<a href='/admin/utilites/view/".$row->id."?city=$city'><i class='fa-solid fa-eye text-primary'></i></a>&nbsp;" : "" ;
                             $actions .= "</span>";
                             return $actions;
                             // return "<span class='action'><a href='/admin/utilites/add/".$row->id."'><i class='fa-solid text-success fa-pen-to-square'></i></a>&nbsp;<a href='/admin/utilites/view/".$row->id."'><i class='fa-solid fa-eye text-primary'></i></a>&nbsp;<a href='/admin/utilites/delete/".$row->id."' onclick='return confirm(`Are you Sure`)' ><i class='fa-solid fa-trash text-danger'</i></a></span>";
@@ -127,7 +130,7 @@ class UtilitesController extends Controller
 
 			if (!is_null($utilites->id)) {
                 //$file_url = str_replace("/public", "", $utilites->banner_url);
-                $file_url = $utilites->banner_url; 
+                $file_url = $utilites->banner_url;
                 if (file_exists(public_path().$file_url) && $file_url != "") {
                     unlink(public_path().$file_url);
                 }
@@ -181,7 +184,7 @@ class UtilitesController extends Controller
                 $utilites->save();
             }
         }
-        
+
         if ($request->has('type')) {
             $status = ($request->type == 'reject') ? 0 : 1 ;
             $comment = ($request->type == 'reject') ? $request->reason : null ;
@@ -216,7 +219,7 @@ class UtilitesController extends Controller
             if ($file_url != "") {
                 if (file_exists(public_path().$file_url)) {
                     unlink(public_path().$file_url);
-                }   
+                }
             }
 
             $utilites->delete();

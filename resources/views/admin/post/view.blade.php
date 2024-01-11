@@ -35,7 +35,9 @@
                         <div class="row">
                             <div class="col-md-12">
                                 @if($post->type == 1)
+                                @if(!empty($avatar_path) AND file_exists($avatar_path))
                                 <img src="{{ $post->post_url }}" alt="Avtar" class="img-fluid img-thumbnail" id="avtar-preview">
+                                @else No Image @endif
                                 @else
                                     @if(str_contains($post->post_url, "https://www.youtube.com"))
                                     <iframe width="320" height="200" src="{{$post->post_url}}" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>

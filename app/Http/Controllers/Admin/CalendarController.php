@@ -37,9 +37,7 @@ class CalendarController extends Controller
     public function index()
     {
         $title = "Calendar Events";
-        $calendar = Calendar::select('*')
-            ->orderBy('id', 'DESC')
-            ->paginate(30);
+        $calendar = Calendar::orderBy('id', 'DESC')->paginate(10);
 
 
         return view('admin.calendar.index', compact('title', 'calendar'));

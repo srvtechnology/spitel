@@ -30,11 +30,9 @@ class PostController extends Controller
     }
 
     public function index()
-
     {
-//        $users = DB::table('post')->select('id')->get();
-
-        return view('admin.post.index');
+        $posts = Post::orderBy('created_at', 'desc')->paginate(10);
+        return view('admin.post.index')->with(compact('posts'));
 
     }
 
@@ -79,7 +77,24 @@ class PostController extends Controller
                                 return;
                             }
                             if ($row->type == 1) {
-                                return "<img src='". $row->post_url ."' alt='Avtar' height='120px;' width='120' style='border-radius: 50px;overflow: hidden;'>";
+                                $avatar_url = $avatar_path= null;
+                                if(!empty($row->post_url))
+                                {
+                                    $avatar_path = $row->post_url;
+                                    $post_explode = explode("/post/",$row->post_url);
+                                    $avatar_path = "post/".$post_explode[1];
+                                    if(app()->environment() != "local")
+                                    {
+                                        $avatar_path =$avatar_path;
+                                        $row['post_url'] = asset("public/".$avatar_path);
+                                    }
+                                }
+                                if(!empty($avatar_path) AND file_exists($avatar_path))
+                                {
+                                    return "<img src='". $row->post_url ."' alt='Avtar' height='120px;' width='120' style='border-radius: 50px;overflow: hidden;'>";
+                                }
+                                return "-";
+                                // return "<img src='". $row->post_url ."' alt='Avtar' height='120px;' width='120' style='border-radius: 50px;overflow: hidden;'>";
                             } else {
                                 if (str_contains($row->post_url, "https://www.youtube.com")) {
                                     return '<iframe width="310" height="200" src="'.$row->post_url.'" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>';
@@ -166,8 +181,14 @@ class PostController extends Controller
                     $post->post_url = $video_url;
                     $post->type = 2;
                 } else {
-                    $post->post_url = null;
-                    $post->type = 0;
+                    $post_url_new = null;
+                    $post_type_new = 0;
+                    if ($request->has('id') && $request->id != '') {
+                        $post_url_new = $post->post_url;
+                        $post_type_new = $post->type;
+                    }
+                    $post->post_url = $post_url_new;
+                    $post->type = $post_type_new;
                 }
             }
         } else {
@@ -192,7 +213,27 @@ class PostController extends Controller
             return back();
         }
         $post = Post::find($id);
-        return view('admin.post.view', compact('post'));
+        $avatar_path = null;
+        if($post->type == 1)
+        {
+            $avatar_url = $avatar_path= null;
+            if(!empty($post->post_url))
+            {
+                $avatar_path = $post->post_url;
+                $post_explode = explode("/post/",$post->post_url);
+                $avatar_path = "post/".$post_explode[1];
+                if(app()->environment() != "local")
+                {
+                    $avatar_path =$avatar_path;
+                    $post['post_url'] = asset("public/".$avatar_path);
+                }
+                else
+                {
+                    $post['post_url'] = asset("/".$avatar_path);
+                }
+            }
+        }
+        return view('admin.post.view', compact('post','avatar_path'));
     }
 
     public function approved(Request $request)

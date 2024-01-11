@@ -42,10 +42,10 @@
             <div class="card-body">
                 <div class="page-title mb-4" style="color: #435ebe;font-size:18px;">
                     <h3>Add Event on Calendar</h3>
-                    <a href="{{ route('calendar.add','0') }}" class="btn btn-success link-btn float-right">+ Add New Event</a>
+                    <a href="{{ route('calendar.add','0') }}" class="btn btn-success link-btn float-right mb-2">+ Add New Event</a>
                 </div>
 
-                <table class="post-datatable table table-hover">
+                <table class="calender-datatable table table-hover">
                     <thead>
                         <tr>
                             <th>Id</th>
@@ -95,6 +95,9 @@
                         @endforeach
                     </tbody>
                 </table>
+                <div class="d-flex justify-content-center">
+                    {{ $calendar->appends(request()->query())->links() }}
+                </div>
             </div>
         </div>
     </div>
@@ -106,5 +109,9 @@
 <script src="//cdn.datatables.net/1.10.7/js/jquery.dataTables.min.js"></script>
 <!-- Bootstrap JavaScript -->
 <script src="//netdna.bootstrapcdn.com/bootstrap/3.2.0/js/bootstrap.min.js"></script>
-
+<script>
+    $('.calender-datatable').DataTable({
+        paging: false
+    });
+</script>
 @endsection

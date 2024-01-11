@@ -18,7 +18,14 @@ class MatrimonyController extends Controller
 {
     public function index()
     {
-        return view('admin.matrimony.index');
+        $family_members = FamilyMember::with(['panth', 'relationship', 'blood_group'])
+            ->where('allow_matrimony', 1)
+            ->whereNull('date_of_expire')
+            ->whereNotNull('name')
+            ->paginate(10);
+
+
+        return view('admin.matrimony.index')->with(compact('family_members'));
     }
 
     public function add(Request $request, $id = null)
@@ -38,7 +45,7 @@ class MatrimonyController extends Controller
                             ->where('is_approved', 1);
 
         if ($request->has('city') && $request->city != '') {
-            $customers = $customers->where('city_id', $request->city);    
+            $customers = $customers->where('city_id', $request->city);
         }
         $customers = $customers->get();
 
@@ -82,7 +89,7 @@ class MatrimonyController extends Controller
     //                         $actions = "<span class='action'>";
     //                         $actions .= (Auth::user()->is_update) ? "<a href='/admin/matrimony/add/".$row->id."?city=$city'><i class='fa-solid text-success fa-pen-to-square'></i></a>&nbsp;" : "" ;
     //                         $actions .= (Auth::user()->is_delete) ? "<a href='/admin/matrimony/delete/".$row->id."?city=$city' onclick='return confirm(`Are you Sure`)' ><i class='fa-solid fa-trash text-danger'></i></a>" : "";
-    //                         $actions .= (Auth::user()->is_view) ? "<a href='/admin/matrimony/view/".$row->id."?city=$city'><i class='fa-solid fa-eye text-primary'></i></a>&nbsp;" : "" ; 
+    //                         $actions .= (Auth::user()->is_view) ? "<a href='/admin/matrimony/view/".$row->id."?city=$city'><i class='fa-solid fa-eye text-primary'></i></a>&nbsp;" : "" ;
     //                         $actions .= "</span>";
     //                         return $actions;
     //                         // return "<span class='action'><a href='/admin/matrimony/add/".$row->id."'><i class='fa-solid text-success fa-pen-to-square'></i></a>&nbsp;<a href='/admin/matrimony/view/".$row->id."'><i class='fa-solid fa-eye text-primary'></i></a>&nbsp;<a href='/admin/matrimony/delete/".$row->id."' onclick='return confirm(`Are you Sure`)' ><i class='fa-solid fa-trash text-danger'</i></a></span>";
@@ -102,7 +109,7 @@ class MatrimonyController extends Controller
 
 
         if ($request->has('cust_id') && $request->cust_id != '') {
-            $family_member = $family_member->where('cust_id', $request->cust_id);           
+            $family_member = $family_member->where('cust_id', $request->cust_id);
         }
 
         if ($request->has('city_id') && $request->city_id != '') {
@@ -110,12 +117,12 @@ class MatrimonyController extends Controller
                 $query->where('city_id', $request->city_id);
             });
             $city = $request->city_id;
-        } 
+        }
 
 		// $family_member->where(function($query){
             // $query->where('status', 2);
             // $query->orWhere('status', 4);
-        // });		
+        // });
 
         $family_member = $family_member->latest('id')->get();
 
@@ -126,7 +133,7 @@ class MatrimonyController extends Controller
                         })
                         ->addColumn('gender', function($row){
                             return ($row->gender == 1) ? "Male" : "Female";
-                        })                        
+                        })
                         ->addColumn('relation', function($row){
                             return (!is_null($row->relationship)) ? $row->relationship->name : "" ;
                         })
@@ -138,7 +145,7 @@ class MatrimonyController extends Controller
                             $actions = "<span class='action'>";
                             $actions .= (Auth::user()->is_update) ? "<a href='/admin/family-member/add/".$row->cust_id."/".$row->id."?city=$city'><i class='fa-solid text-success fa-pen-to-square'></i></a>&nbsp;" : "" ;
                             $actions .= (Auth::user()->is_delete) ? "<a href='/admin/family-member/delete/member/".$row->id."?city=$city' onclick='return confirm(`Are you Sure`)' ><i class='fa-solid fa-trash text-danger'></i></a>" : "";
-                            $actions .= (Auth::user()->is_view) ? "<a href='/admin/family-member/view/".$row->id."?city=$city'><i class='fa-solid fa-eye text-primary'></i></a>&nbsp;" : "" ; 
+                            $actions .= (Auth::user()->is_view) ? "<a href='/admin/family-member/view/".$row->id."?city=$city'><i class='fa-solid fa-eye text-primary'></i></a>&nbsp;" : "" ;
                             $actions .= "</span>";
                             return $actions;
                         })
@@ -216,7 +223,7 @@ class MatrimonyController extends Controller
         if (!Auth::user()->is_delete) {
             return back();
         }
-        
+
         $matrimony = Matrimony::find($id);
 
         if (!is_null($matrimony)) {

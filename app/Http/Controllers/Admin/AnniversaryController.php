@@ -16,7 +16,26 @@ class AnniversaryController extends Controller
 {
     public function index()
     {
-        return view('admin.anniversary.index');
+        $customer = Customer::select('avtar_url', 'first_name', 'phone_no', 'date_of_anniversary', 'id')
+                            ->whereNotNull('first_name')
+                            ->whereNotNull('date_of_anniversary');
+
+        $customer = $customer->latest('id')->get();
+
+        $family_member = FamilyMember::select('id', 'avtar', 'cust_id', 'gender', 'phone_no', 'date_of_anniversary', 'name')
+                                    ->whereNotNull('name')
+                                    ->whereNotNull('date_of_anniversary');
+
+        if (request('city') && request('city') != '') {
+            $family_member = $family_member->whereHas('customer', function($query) use($request) {
+                $query->where('city_id', request('city'));
+            });
+        }
+
+        $family_member = $family_member->latest('id')->get();
+
+        $anniversary = $customer->merge($family_member)->paginate(10);
+        return view('admin.anniversary.index')->with(compact('anniversary'));
     }
 
     public function list(Request $request)
@@ -105,12 +124,12 @@ class AnniversaryController extends Controller
                             if (class_basename($row) == "Customer") {
                                 $actions .= (Auth::user()->is_update) ? "<a href='/admin/customer/add/".$row->id."?city=".$city."'><i class='fa-solid text-success fa-pen-to-square'></i></a>&nbsp;" : "" ;
                                 $actions .= (Auth::user()->is_delete) ? "<a href='/admin/customer/delete/".$row->id."?city=".$city."' onclick='return confirm(`Are you Sure`)' ><i class='fa-solid fa-trash text-danger'></i></a>" : "";
-                                $actions .= (Auth::user()->is_view) ? "<a href='/admin/customer/view/".$row->id."?city=".$city."'><i class='fa-solid fa-eye text-primary'></i></a>" : "" ; 
+                                $actions .= (Auth::user()->is_view) ? "<a href='/admin/customer/view/".$row->id."?city=".$city."'><i class='fa-solid fa-eye text-primary'></i></a>" : "" ;
                                 $actions .= "</span>";
                             } else {
                                 $actions .= (Auth::user()->is_update) ? "<a href='/admin/family-member/add/".$row->cust_id."/".$row->id."?city=$city'><i class='fa-solid text-success fa-pen-to-square'></i></a>&nbsp;" : "" ;
                                 $actions .= (Auth::user()->is_delete) ? "<a href='/admin/family-member/delete/member/".$row->id."?city=$city' onclick='return confirm(`Are you Sure`)' ><i class='fa-solid fa-trash text-danger'></i></a>" : "";
-                                $actions .= (Auth::user()->is_view) ? "<a href='/admin/family-member/view/".$row->id."?city=$city'><i class='fa-solid fa-eye text-primary'></i></a>&nbsp;" : "" ; 
+                                $actions .= (Auth::user()->is_view) ? "<a href='/admin/family-member/view/".$row->id."?city=$city'><i class='fa-solid fa-eye text-primary'></i></a>&nbsp;" : "" ;
                                 $actions .= "</span>";
                             }
                             return $actions;
@@ -145,7 +164,7 @@ class AnniversaryController extends Controller
 
         return view('admin.anniversary.add', compact('anniversary', 'customers'));
     }
-    
+
     public function store(Request $request)
     {
         $anniversary = new Anniversary;
@@ -193,7 +212,7 @@ class AnniversaryController extends Controller
         $anniversary = Anniversary::find($id);
 
         if (!is_null($anniversary)) {
-            return view('admin.anniversary.view', compact('anniversary'));    
+            return view('admin.anniversary.view', compact('anniversary'));
         }
 
         return back();

@@ -16,7 +16,31 @@ class BirthdayController extends Controller
 {
     public function index()
     {
-        return view('admin.birthday.index');
+
+        $family_member = FamilyMember::select('id', 'cust_id', 'name', 'phone_no', 'date_of_birth', 'avtar')
+            ->whereNotNull('date_of_birth')
+            ->whereNotNull('name');
+
+        $customer = Customer::select('id', 'first_name', 'phone_no', 'date_of_birth', 'avtar_url', 'father_husband_name', 'surname_id')
+            ->with('surname')
+            ->whereNotNull('date_of_birth')
+            ->whereNotNull('first_name');
+
+        if (request('city') && request('city') != '') {
+            $customer = $customer->where('city_id', request('city'));
+        }
+        if (request('city') && request('city') != '') {
+            $family_member = $family_member->whereHas('customer', function($query) use($request){
+                $query->where('city_id', request('city'));
+            });
+        }
+
+        $customer = $customer->latest('id')->get();
+        $family_member = $family_member->latest('id')->get();
+
+        $birthday = $customer->merge($family_member)->paginate(10);
+
+        return view('admin.birthday.index')->with(compact('birthday'));
     }
 
     public function form($id = null)
@@ -101,7 +125,7 @@ class BirthdayController extends Controller
                                 $surname = (!is_null($row->surname)) ? $row->surname->name : "";
                                 return $row->first_name." ".$row->father_husband_name." $surname";
                             } else {
-                                return $row->name; 
+                                return $row->name;
                             }
                         })
                         ->addColumn('mobile_no', function($row){
@@ -114,7 +138,7 @@ class BirthdayController extends Controller
                             // $actions = "<span class='action'>";
                             // $actions .= (Auth::user()->is_update) ? "<a href='/admin/birthday/add/".$row->id."'><i class='fa-solid text-success fa-pen-to-square'></i></a>&nbsp;" : "" ;
                             // $actions .= (Auth::user()->is_delete) ? "<a href='/admin/birthday/delete/".$row->id."' onclick='return confirm(`Are you Sure`)' ><i class='fa-solid fa-trash text-danger'></i></a>" : "";
-                            // $actions .= (Auth::user()->is_view) ? "<a href='/admin/birthday/view/".$row->id."'><i class='fa-solid fa-eye text-primary'></i></a>&nbsp;" : "" ; 
+                            // $actions .= (Auth::user()->is_view) ? "<a href='/admin/birthday/view/".$row->id."'><i class='fa-solid fa-eye text-primary'></i></a>&nbsp;" : "" ;
                             // $actions .= "</span>";
                             return "";
                             // return "<span class='action'><a href='/admin/birthday/add/".$row->id."'><i class='fa-solid text-success fa-pen-to-square'></i></a>&nbsp;<a href='/admin/birthday/view/".$row->id."'><i class='fa-solid fa-eye text-primary'></i></a>&nbsp;<a href='/admin/birthday/delete/".$row->id."' onclick='return confirm(`Are you Sure`)' ><i class='fa-solid fa-trash text-danger'</i></a></span>";
@@ -164,7 +188,7 @@ class BirthdayController extends Controller
         $birthday = Birthday::find($id);
 
         if (!is_null($birthday)) {
-            return view('admin.birthday.view', compact('birthday'));    
+            return view('admin.birthday.view', compact('birthday'));
         }
 
         return back();
