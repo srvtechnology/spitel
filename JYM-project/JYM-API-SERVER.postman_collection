@@ -1,0 +1,868 @@
+{
+	"info": {
+		"_postman_id": "d73da821-f42a-4ee0-b9b5-c398a28597b7",
+		"name": "JYM-APP",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "OTP-REQUEST",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"phone_no\": \"7600742473\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://jym.ctells.com/api/send-otp",
+					"protocol": "https",
+					"host": [
+						"jym",
+						"ctells",
+						"com"
+					],
+					"path": [
+						"api",
+						"send-otp"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get User",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "2|PRyMo7DP1YzGmipASroRoiW01ZYjMmSXaG4zPUFz",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://jym.ctells.com/api/user",
+					"protocol": "https",
+					"host": [
+						"jym",
+						"ctells",
+						"com"
+					],
+					"path": [
+						"api",
+						"user"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Verify-OTP",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"phone_no\": \"7600742473\",\r\n    \"otp\": \"894492\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://jym.ctells.com/api/verify-otp",
+					"protocol": "https",
+					"host": [
+						"jym",
+						"ctells",
+						"com"
+					],
+					"path": [
+						"api",
+						"verify-otp"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Upload Avtar",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "2|PRyMo7DP1YzGmipASroRoiW01ZYjMmSXaG4zPUFz",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "avtar",
+							"type": "file",
+							"src": []
+						}
+					]
+				},
+				"url": {
+					"raw": "https://jym.ctells.com/customer/upload-avtar",
+					"protocol": "https",
+					"host": [
+						"jym",
+						"ctells",
+						"com"
+					],
+					"path": [
+						"customer",
+						"upload-avtar"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Register-Customer",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "2|PRyMo7DP1YzGmipASroRoiW01ZYjMmSXaG4zPUFz",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"avtar_url\": \"/public/avtar/521363156profile.jpg\",\r\n    \"first_name\": \"Jenny\",\r\n    \"father_husband_name\": \"Patel\",\r\n    \"surname_id\": \"6\",\r\n    \"panth_id\": \"1\",\r\n    \"patti_id\": \"2\",\r\n    \"phone_no\": \"9856523652\",\r\n    \"alt_phone_no\": null,\r\n    \"email_address\": \"manish@m.com\",\r\n    \"gender\": \"1\",\r\n    \"date_of_birth\": \"2023-01-07\",\r\n    \"blood_group_id\": null,\r\n    \"address\": null,\r\n    \"pincode\": null,\r\n    \"state_id\": \"5\",\r\n    \"city_id\": \"128\",\r\n    \"status_id\": \"4\",\r\n    \"date_of_anniversary\": null,\r\n    \"date_of_expiry\": null,\r\n    \"sasural_gautra_id\": null,\r\n    \"education\": null,\r\n    \"native_address\": null,\r\n    \"native_pincode\": null,\r\n    \"native_state_id\": null,\r\n    \"native_city_id\": null,\r\n    \"business_category_id\": null,\r\n    \"company_firm_name\": null,\r\n    \"designation\": null,\r\n    \"business_address\": null,\r\n    \"business_pincode\": null,\r\n    \"business_state_id\": null,\r\n    \"business_city_id\": null\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://jym.ctells.com/api/customer-register",
+					"protocol": "https",
+					"host": [
+						"jym",
+						"ctells",
+						"com"
+					],
+					"path": [
+						"api",
+						"customer-register"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get City",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://jym.ctells.com/api/get-cities",
+					"protocol": "https",
+					"host": [
+						"jym",
+						"ctells",
+						"com"
+					],
+					"path": [
+						"api",
+						"get-cities"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get-cities-of-state",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "state_id",
+							"value": "5",
+							"type": "default"
+						}
+					]
+				},
+				"url": {
+					"raw": "https://jym.ctells.com/api/get-cities-of-state",
+					"protocol": "https",
+					"host": [
+						"jym",
+						"ctells",
+						"com"
+					],
+					"path": [
+						"api",
+						"get-cities-of-state"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get-State",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://jym.ctells.com/api/get-state",
+					"protocol": "https",
+					"host": [
+						"jym",
+						"ctells",
+						"com"
+					],
+					"path": [
+						"api",
+						"get-state"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get-Surname",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://jym.ctells.com/api/get-surname",
+					"protocol": "https",
+					"host": [
+						"jym",
+						"ctells",
+						"com"
+					],
+					"path": [
+						"api",
+						"get-surname"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get-Patti",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://jym.ctells.com/api/get-patti",
+					"protocol": "https",
+					"host": [
+						"jym",
+						"ctells",
+						"com"
+					],
+					"path": [
+						"api",
+						"get-patti"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Blood Group",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://jym.ctells.com/api/get-blood_group",
+					"protocol": "https",
+					"host": [
+						"jym",
+						"ctells",
+						"com"
+					],
+					"path": [
+						"api",
+						"get-blood_group"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Business Category",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://jym.ctells.com/api/get-business-category",
+					"protocol": "https",
+					"host": [
+						"jym",
+						"ctells",
+						"com"
+					],
+					"path": [
+						"api",
+						"get-business-category"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Family-Member-Add-Edit",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "2|PRyMo7DP1YzGmipASroRoiW01ZYjMmSXaG4zPUFz",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"avtar_url\": \"/public/avtar/1775580032profile.jpg\",\r\n    \"name\": \"Mahesh\",\r\n    \"phone_no\": \"8565899658\",\r\n    \"panth_id\": \"1\",\r\n    \"gender\": \"1\",\r\n    \"status_id\": \"2\",\r\n    \"date_of_anniversary\": null,\r\n    \"date_of_expire\": null,\r\n    \"time_of_birth\": null,\r\n    \"birth_place\": null,\r\n    \"relationship_id\": \"1\",\r\n    \"about\": \"This is a about\",\r\n    \"date_of_birth\": \"2023-01-07\",\r\n    \"education\": null,\r\n    \"blood_group_id\": null,\r\n    \"naniyal_gautra_id\": null\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://jym.ctells.com/api/family_member/create",
+					"protocol": "https",
+					"host": [
+						"jym",
+						"ctells",
+						"com"
+					],
+					"path": [
+						"api",
+						"family_member",
+						"create"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get-Family-Member",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "2|PRyMo7DP1YzGmipASroRoiW01ZYjMmSXaG4zPUFz",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://jym.ctells.com/api/family_member",
+					"protocol": "https",
+					"host": [
+						"jym",
+						"ctells",
+						"com"
+					],
+					"path": [
+						"api",
+						"family_member"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete-Family-Member",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "2|PRyMo7DP1YzGmipASroRoiW01ZYjMmSXaG4zPUFz",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://jym.ctells.com/api/family_member/delete/16",
+					"protocol": "https",
+					"host": [
+						"jym",
+						"ctells",
+						"com"
+					],
+					"path": [
+						"api",
+						"family_member",
+						"delete",
+						"16"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get-Birthday",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"from_day\": \"01\",\r\n    \"from_month\": \"01\",\r\n    \"to_day\": \"30\",\r\n    \"to_month\": \"12\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://jym.ctells.com/api/birthday",
+					"protocol": "https",
+					"host": [
+						"jym",
+						"ctells",
+						"com"
+					],
+					"path": [
+						"api",
+						"birthday"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get-Anniversary",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"from_day\": \"01\",\r\n    \"from_month\": \"01\",\r\n    \"to_day\": \"30\",\r\n    \"to_month\": \"12\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://jym.ctells.com/api/anniversary",
+					"protocol": "https",
+					"host": [
+						"jym",
+						"ctells",
+						"com"
+					],
+					"path": [
+						"api",
+						"anniversary"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get-Matrimony",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://jym.ctells.com/api/matrimony",
+					"protocol": "https",
+					"host": [
+						"jym",
+						"ctells",
+						"com"
+					],
+					"path": [
+						"api",
+						"matrimony"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "News Category",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://jym.ctells.com/api/news/category",
+					"protocol": "https",
+					"host": [
+						"jym",
+						"ctells",
+						"com"
+					],
+					"path": [
+						"api",
+						"news",
+						"category"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "News Sub Category",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://jym.ctells.com/api/news/sub-category",
+					"protocol": "https",
+					"host": [
+						"jym",
+						"ctells",
+						"com"
+					],
+					"path": [
+						"api",
+						"news",
+						"sub-category"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "News",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"filter_from\": \"2022-01-01\",\r\n    \"filter_to\": \"2023-01-01\",\r\n    \"category_id\": \"\",\r\n    \"sub_category_id\": \"\",\r\n    \"city_id\": \"\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://jym.ctells.com/api/news",
+					"protocol": "https",
+					"host": [
+						"jym",
+						"ctells",
+						"com"
+					],
+					"path": [
+						"api",
+						"news"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Slide",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://jym.ctells.com/api/get-add-slide",
+					"protocol": "https",
+					"host": [
+						"jym",
+						"ctells",
+						"com"
+					],
+					"path": [
+						"api",
+						"get-add-slide"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Advertisement-list",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"slide\": \"\",\r\n    \"city_id\": \"147\"   \r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://jym.ctells.com/api/advertisement",
+					"protocol": "https",
+					"host": [
+						"jym",
+						"ctells",
+						"com"
+					],
+					"path": [
+						"api",
+						"advertisement"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Utilities-List",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"filter_from\": \"2022-01-01\",\r\n    \"filter_to\": \"2022-12-30\",\r\n    \"city\": \"147\",\r\n    \"category_id\": \"\",\r\n    \"sub_category\": \"\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://jym.ctells.com/api/utilities",
+					"protocol": "https",
+					"host": [
+						"jym",
+						"ctells",
+						"com"
+					],
+					"path": [
+						"api",
+						"utilities"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Video List",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"city\": \"147\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://jym.ctells.com/api/video",
+					"protocol": "https",
+					"host": [
+						"jym",
+						"ctells",
+						"com"
+					],
+					"path": [
+						"api",
+						"video"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Surname List",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://jym.ctells.com/api/get-surname",
+					"protocol": "https",
+					"host": [
+						"jym",
+						"ctells",
+						"com"
+					],
+					"path": [
+						"api",
+						"get-surname"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Panth List",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://jym.ctells.com/api/get-panth",
+					"protocol": "https",
+					"host": [
+						"jym",
+						"ctells",
+						"com"
+					],
+					"path": [
+						"api",
+						"get-panth"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Relationship List",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://jym.ctells.com/api/get-relationship",
+					"protocol": "https",
+					"host": [
+						"jym",
+						"ctells",
+						"com"
+					],
+					"path": [
+						"api",
+						"get-relationship"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Group List",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://jym.ctells.com/api/get-group",
+					"protocol": "https",
+					"host": [
+						"jym",
+						"ctells",
+						"com"
+					],
+					"path": [
+						"api",
+						"get-group"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Utilities Category",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://jym.ctells.com/api/get-utilities-category",
+					"protocol": "https",
+					"host": [
+						"jym",
+						"ctells",
+						"com"
+					],
+					"path": [
+						"api",
+						"get-utilities-category"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Utilities Sub Category",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"parent_id\": \"4\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://jym.ctells.com/api/get-utilities-sub-category",
+					"protocol": "https",
+					"host": [
+						"jym",
+						"ctells",
+						"com"
+					],
+					"path": [
+						"api",
+						"get-utilities-sub-category"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

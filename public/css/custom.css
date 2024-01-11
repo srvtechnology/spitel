@@ -1,0 +1,62 @@
+.topbar {
+    background-color: #435ebe;
+}
+wrapper[data-layout=vertical] .topbar .top-navbar .navbar-header[data-logobg=skin6] {
+    background: aliceblue!important;
+}
+.sidebar-item .sidebar-link.active {
+    background-color: #435ebe;
+}
+.btn-success{
+    background-color: #435ebe;
+    color: white;
+    border-radius: 30px;
+    letter-spacing: 0.8px;
+}
+.btn-success:hover{
+    background-color:#435ebe;
+    color: white;
+    border-radius: 30px;
+}
+.btn-light {
+    color: black;
+    border-radius: 30px;
+}
+.btn-light:hover {
+    color: black;
+    border-radius: 30px;
+}
+.error{
+    color: maroon;
+}
+.text-success {
+    color: #435ebe;
+}
+.action a{
+    font-size: 25px;
+    margin: 10px;
+}
+.sidebar-item a{
+    color: black;
+}
+.align-right {
+    text-align: right;
+    border: 0;
+}
+.me-2 {
+    color: #657fda!important;
+}
+.me-2 span {
+    color: black!important;
+}
+.btn-danger {
+    border-radius: 30px;
+    color: white;
+}
+.select-city {
+    margin-left: 10px;
+}
+.select2-container {
+    margin-left: 10px!important;
+    width: 250px;
+}
