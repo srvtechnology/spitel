@@ -32,12 +32,23 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-3 border">
-                        @if(!is_null($customer->avtar_url))
-                        <img src="{{$customer->avtar_url}}" class="img-fluid img-avtar">
-                        @else
-                        <br><br><br><br><br>
-                        <h3 class="text-center text-muted">No Image</h3>
-                        @endif
+                        @php
+                        $avatar_url = $avatar_path= null;
+                        if(!empty($customer->avtar_url))
+                        {
+                            $avatar_path =$customer->avtar_url;
+                            if(app()->environment() == "local")
+                            {
+                                $explode = explode("public/",$customer->avtar_url);
+                                $avatar_url = $explode[1];
+                                $avatar_path =$avatar_url;
+                                $customer['avtar_url'] = asset("/".$avatar_url);
+                            }
+                        }
+                        @endphp
+                        @if(!empty($avatar_path) AND file_exists($avatar_path))
+                        <img src="{{ $customer->avtar_url }}" alt='Avtar' class="img-fluid img-avtar">
+                        @else <h3 class="text-center text-muted">No Image</h3> @endif
                     </div>
                     <div class="col-md-9">
                         <div class="alert-primary">
@@ -67,7 +78,7 @@
                                         @if($customer->surname)
                                         {{$customer->surname->name}}
                                         @else
-                                        
+
                                         @endif
                                     </div>
                                 </div>
@@ -80,7 +91,7 @@
                                             @if(!is_null($customer->panth))
                                             {{$customer->panth->name}}
                                             @else
-                                            
+
                                             @endif
                                         @endif
                                     </div>
@@ -94,7 +105,7 @@
                                             @if(!is_null($customer->patti))
                                             {{$customer->patti->name}}
                                             @else
-                                            
+
                                             @endif
                                         @endif
                                     </div>
@@ -104,7 +115,7 @@
                                 <div class="form-group">
                                     <label for="firstname">Date of birth</label><br>
                                     <div class="info">
-                                        {{$customer->date_of_birth}}
+                                        {{date("d-m-Y",strtotime($customer->date_of_birth))}}
                                     </div>
                                 </div>
                             </div>
@@ -156,7 +167,7 @@
                                     @if(!is_null($customer->blood_group))
                                     {{$customer->blood_group->name}}
                                     @else
-                                    
+
                                     @endif
                                 @endif
                             </div>
@@ -199,7 +210,7 @@
                                     @if(!is_null($customer->city))
                                     {{$customer->city->city}}
                                     @else
-                                    
+
                                     @endif
                                 @endif
                             </div>
@@ -246,7 +257,7 @@
                                     @if(!is_null($customer->sasural_surname))
                                         {{$$customer->sasural_surname->name}}
                                     @else
-                                        
+
                                     @endif
                                 @endif
                             </div>
@@ -277,7 +288,7 @@
                     <div class="col-md-3">
                         <div class="form-group">
                             <label for="firstname">From</label>
-                            <div class="info">                                
+                            <div class="info">
 								{{ !empty($customer->start) && $customer->start != '0000-00-00' ? date("Y-m-d", strtotime($customer->start)) : ''}}
                             </div>
                         </div>
@@ -328,7 +339,7 @@
                                     @if(!is_null($customer->native_state))
                                         {{$customer->native_state->name}}
                                     @else
-                                        
+
                                     @endif
                                 @endif
                             </div>
@@ -342,7 +353,7 @@
                                     @if(!is_null($customer->native_city))
                                         {{$customer->native_city->city}}
                                     @else
-                                        
+
                                     @endif
                                 @endif
                             </div>
@@ -367,7 +378,7 @@
                                     @if(!is_null($customer->business_category))
                                         {{$customer->business_category->name}}
                                     @else
-                                        
+
                                     @endif
                                 @endif
                             </div>
@@ -413,7 +424,7 @@
                                     @if(!is_null($customer->business_state))
                                         {{$customer->business_state->name}}
                                     @else
-                                        
+
                                     @endif
                                 @endif
                             </div>
@@ -427,7 +438,7 @@
                                     @if(!is_null($customer->business_city))
                                         {{$customer->business_city->city}}
                                     @else
-                                        
+
                                     @endif
                                 @endif
                             </div>

@@ -30,12 +30,29 @@
             <div class="card-body">
                 <div class="row">
                     <div class="col-md-3 border">
-                        @if(!is_null($family_member->avtar))
+                        {{--  @if(!is_null($family_member->avtar))
                         <img src="{{$family_member->avtar}}" class="img-fluid img-avtar">
                         @else
                         <br><br><br><br><br>
                         <h3 class="text-center text-muted">No Image</h3>
-                        @endif
+                        @endif  --}}
+                        @php
+                        $avatar_url = $avatar_path= null;
+                        if(!empty($family_member->avtar))
+                        {
+                            $avatar_path =$family_member->avtar;
+                            if(app()->environment() == "local")
+                            {
+                                $explode = explode("public/",$family_member->avtar);
+                                $avatar_url = $explode[1];
+                                $avatar_path =$avatar_url;
+                                $family_member['avtar'] = asset("/".$avatar_url);
+                            }
+                        }
+                        @endphp
+                        @if(!empty($avatar_path) AND file_exists($avatar_path))
+                        <img src="{{ $family_member->avtar }}" alt='Avtar' class="img-fluid img-avtar">
+                        @else <h3 class="text-center text-muted">No Image</h3> @endif
                     </div>
                     <div class="col-md-9">
                         <div class="row">
@@ -207,7 +224,7 @@
                                 @if(!is_null($family_member->naniyal_gautra))
                                 {{$family_member->naniyal_gautra->name}}
                                 @else
-                                <span class="text-danger">Delete</span> 
+                                <span class="text-danger">Delete</span>
                                 @endif
                             </div>
                         </div>

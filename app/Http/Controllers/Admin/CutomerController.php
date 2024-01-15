@@ -442,6 +442,12 @@ class CutomerController extends Controller
         }
 
         if ($request->has('is_family_member')) {
+            if(app()->environment() == "local")
+            {
+                $explode = explode("public/",$family_memeber->avtar);
+                $avatar_url = $explode[1];
+                $family_memeber['avtar'] = asset("/".$avatar_url);
+            }
             return response()->json($family_memeber);
         } else {
             if(app()->environment() == "local")

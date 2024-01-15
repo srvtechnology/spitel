@@ -185,6 +185,15 @@
 
         @if(!is_null($family_member))
             @if(!is_null($family_member->avtar))
+            @php
+            if(app()->environment() == "local")
+            {
+                $explode = explode("public/",$family_member->avtar);
+                $avatar_url = $explode[1];
+                $family_member['avtar'] = asset("/".$avatar_url);
+            }
+            @endphp
+
             $("#preview_image").attr('src', "{{$family_member->avtar}}");
             $("#close-image-id").val("{{$family_member->id}}");
             $(".img-row").show();
@@ -223,7 +232,7 @@
                 $(".date_of_expiry_container").hide();
                 $(".matrimony-container").hide();
             @endif
-            
+
             panth("#panth_id", "{{$family_member->panth_id}}");
             blood_group("#blood_group_id", "{{$family_member->blood_group_id}}");
             relationship('#relationship_id', "{{$family_member->relationship_id}}");

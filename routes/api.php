@@ -65,7 +65,7 @@ Route::group(['prefix' => 'anniversary'], function () {
 });
 
 Route::group(['prefix' => 'engagements', 'as' => 'engagements.'], function () {
-	Route::get('/', [EngagementController::class, 'index']);
+	Route::get('/', [CustomerController::class, 'engagements']);
 });
 
 Route::group(['prefix' => 'matrimony'], function () {

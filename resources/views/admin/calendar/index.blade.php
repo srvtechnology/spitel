@@ -62,7 +62,7 @@
                         @foreach($calendar as $r)
                         </tr>
                         <td>{{$r->id}}</td>
-                        <td> {{ $r->eventDate }}</td>
+                        <td> {{ date("d-m-Y",strtotime($r->eventDate)) }}</td>
                         <td>{{ substr($r->thought,0,32)}}..</td>
                         <td>
                             Veer sanwat: {{ $r->veer_sanwat }}<br>

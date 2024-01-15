@@ -32,7 +32,7 @@ class FamilyMemberController extends Controller
     								->whereNotNull('name');
 
     	if ($request->has('cust_id') && $request->cust_id != '') {
-			$family_member = $family_member->where('cust_id', $request->cust_id);    		
+			$family_member = $family_member->where('cust_id', $request->cust_id);
     	}
 
 	    if ($request->has('city_id') && $request->city_id != '') {
@@ -43,11 +43,28 @@ class FamilyMemberController extends Controller
         }
 
     	$family_member = $family_member->latest('id')->get();
-
         return Datatables::of($family_member)
                         ->addIndexColumn()
                         ->addColumn('avtar', function($row){
-                            return (!is_null($row->avtar)) ? "<img src='". $row->avtar ."' alt='Avtar' width='120' style='border-radius: 50px;'>" : "" ;
+                            $avatar_url = $avatar_path = null;
+
+                            if (!empty($row->avtar)) {
+                                $avatar_path = $row->avtar;
+
+                                if (app()->environment() == "local") {
+                                    $explode = explode("public/", $row->avtar);
+                                    $avatar_url = $explode[1];
+                                    $avatar_path = $avatar_url;
+                                    $row->avtar = asset("/" . $avatar_url);
+                                }
+                            }
+
+                            if (!empty($avatar_path) && file_exists($avatar_path)) {
+                                return "<img src='" . $row->avtar . "' alt='Avatar' width='120' style='border-radius: 50px;'>";
+                            } else {
+                                return "-";
+                            }
+
                         })
                         ->addColumn('relation', function($row){
                         	return (!is_null($row->relationship)) ? $row->relationship->name : "" ;
@@ -56,7 +73,7 @@ class FamilyMemberController extends Controller
                             $actions = "<span class='action'>";
                             $actions .= (Auth::user()->is_update) ? "<a href='/admin/family-member/add/".$row->cust_id."/".$row->id."?city=$city'><i class='fa-solid text-success fa-pen-to-square'></i></a>&nbsp;" : "" ;
                             $actions .= (Auth::user()->is_delete) ? "<a href='/admin/family-member/delete/member/".$row->id."?city=$city' onclick='return confirm(`Are you Sure`)' ><i class='fa-solid fa-trash text-danger'></i></a>" : "";
-                            $actions .= (Auth::user()->is_view) ? "<a href='/admin/family-member/view/".$row->id."?city=$city'><i class='fa-solid fa-eye text-primary'></i></a>&nbsp;" : "" ; 
+                            $actions .= (Auth::user()->is_view) ? "<a href='/admin/family-member/view/".$row->id."?city=$city'><i class='fa-solid fa-eye text-primary'></i></a>&nbsp;" : "" ;
                             $actions .= "</span>";
                             return $actions;
                         })
@@ -93,7 +110,7 @@ class FamilyMemberController extends Controller
     public function store(Request $request)
     {
     	$family_member = FamilyMember::where('id', $request->family_member_id)->first();
-		
+
     	if (is_null($family_member)) {
     		$family_member = new FamilyMember;
     		$family_member->token = $request->token;

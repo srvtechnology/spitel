@@ -50,6 +50,9 @@ class AdvertisementController extends Controller
                         ->addColumn('city', function($row){
                             return (!is_null($row->city)) ? $row->city->city : "<span class='text text-danger'>Delete</span>";
                         })
+                        ->addColumn('to_date', function($row){
+                            return (!is_null($row->to_date)) ? date("d-m-Y",strtotime($row->to_date)) : "";
+                        })
                         ->addColumn('slide', function($row){
                             return (!is_null($row->slide)) ? $row->slide->name : "<span class='text text-danger'>Delete</span>";
                         })
@@ -92,7 +95,7 @@ class AdvertisementController extends Controller
     public function store(Request $request)
     {
         $addvertisement = new Advertisement;
-        
+
         if ($request->has('id') && $request->id != '') {
             $addvertisement = Advertisement::find($request->id);
         }
@@ -114,7 +117,7 @@ class AdvertisementController extends Controller
             $path = "/add_banner/".$name;
             $addvertisement->banner_url = $path;
         }
-        
+
         $addvertisement->name = $request->name;
         $addvertisement->customer_id = ($request->has('customer_id') && $request->customer_id != "") ? $request->customer_id : 0;
         $addvertisement->advertisement_name = $request->add_name;

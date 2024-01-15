@@ -12,7 +12,7 @@ class AuthController extends Controller
     public function authenticate(Request $request)
     {
        // dd("test");
-
+        // return $request;
         $type = filter_var($request->email_phone, FILTER_VALIDATE_EMAIL) ? 'email' : 'phone_no';
         if(Auth::attempt([$type => $request->email_phone, 'password' => $request->password]))
         {

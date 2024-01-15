@@ -9,8 +9,14 @@ use App\Models\{
     State,
     Customer,
     City,
-    FamilyMember
+    FamilyMember,
+    Engagement
 };
+use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Resources\Json\JsonResource;
+use App\Http\Requests\Engagement\EngagementRequest;
+use App\Http\Resources\Engagement\EngagementResource;
 
 class CustomerController extends Controller
 {
@@ -66,34 +72,34 @@ class CustomerController extends Controller
             'state_id' => 'required',
             'city_id' => 'required',
         ]);
-		
+
 		if (!is_array($validated) && $validated->fails()) {
 	        return response()->json($validated);
         }
-		
+
 
         if (($request->has('id') && $request->id != '') || ($request->has('phone_no') && $request->phone_no != '')) {
             $message = "Profile Updated successfully";
             $customer = Customer::find($request->id);
-			
+
             if (is_null($customer)) {
                 $message = 'Customer already registered with this phone number';
-                $customer = Customer::where('phone_no', $request->phone_no)->first();	
-				
+                $customer = Customer::where('phone_no', $request->phone_no)->first();
+
 				if (is_null($customer)) {
 					$customer = new Customer();
 					$message = "Customer registered successfully";
-					$customer->token = "APP-".Str::random(6);					
+					$customer->token = "APP-".Str::random(6);
 				}
-				
-            }			
+
+            }
         } else {
             $customer = new Customer();
             $message = "Customer registered successfully";
             $customer->token = "APP-".Str::random(6);
-        }	
-		
-		
+        }
+
+
         $customer->avtar_url = $request->avtar_url ?? null;
         $customer->first_name = $request->first_name;
         $customer->father_husband_name = $request->father_husband_name;
@@ -163,7 +169,7 @@ class CustomerController extends Controller
                     'message' => 'Your status is expired'
                 ]);
             }
-            
+
 			$otp = rand(111111, 999999);
 			$customer->otp = $otp;
 			$customer->save();
@@ -254,29 +260,29 @@ class CustomerController extends Controller
             $data = Customer::with('family_members', 'surname_gautra', 'native_city', 'city')->where('system_status',1)->whereNotNull('first_name')->orderBy('first_name')->get();
 
             // foreach($data as $customer) {
-                // $family_members = FamilyMember::where('cust_id',$customer->id)->get();                
+                // $family_members = FamilyMember::where('cust_id',$customer->id)->get();
             // }
 
             return response()->json(['data' => $data], 200);
         }
     }
-	
+
 	public function uploadImage(Request $request)
 	{
 		$path = '';
-		if($request->hasFile('avtar')) {           
+		if($request->hasFile('avtar')) {
 			$uploads_dir = $_SERVER['DOCUMENT_ROOT']."/public/avtar";
 			$tmp_name = $_FILES["avtar"]["tmp_name"];
 			$name = rand().basename($_FILES["avtar"]["name"]);
 			move_uploaded_file($tmp_name, "$uploads_dir/$name");
 
-			$path = "/public/avtar/$name";            
-		}        
+			$path = "/public/avtar/$name";
+		}
 
-	   
+
 		return response()->json($path);
 	}
-	 
+
 	public function getAllCustomer(Request $req)
     {
         if ($req->has('id') && $req->id != '') {
@@ -291,7 +297,7 @@ class CustomerController extends Controller
 
 			$arr = [];
             foreach($data as $customer) {
-                //$family_members = FamilyMember::where('cust_id',$customer->id)->get();             
+                //$family_members = FamilyMember::where('cust_id',$customer->id)->get();
 				$surname = isset($customer->surname_gautra->name) ? $customer->surname_gautra->name : '';
 				$arr[] = [
 					"id"=> $customer->id,
@@ -344,11 +350,17 @@ class CustomerController extends Controller
 					"native_city"=> $customer->native_city,
 					"city"=> $customer->city,
 				];
-				
+
             }
 
             return response()->json(['data' => $arr], 200);
         }
+    }
+
+    public function engagements(): JsonResource
+    {
+        $engagements = Engagement::all();
+        return EngagementResource::collection($engagements);
     }
 
 }
