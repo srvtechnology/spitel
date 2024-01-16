@@ -38,6 +38,7 @@
             <div class="card">
                 <div class="card-body">
                     <h4>Add Staff</h4>
+                    <div class="alert alert-danger" role="alert" id="error_section" style="display: none;"></div>
                     <div class="row mt-3">
                         <div class="col-md-4">
                             <div class="form-group">
@@ -105,7 +106,7 @@
                     <div class="row mt-3">
                         <div class="col-md-12 align-right">
                             <a href="{{ route('staff.view') }}" class="btn btn-light">Cancel</a>
-                            <button type="submit" class="btn btn-success">Save</button>
+                            <button type="submit" class="btn btn-success save_btn">Save</button>
                         </div>
                     </div>
                 </div>
@@ -143,7 +144,6 @@
                 },
                 phone_no: {
                     required: true,
-                    digits: true
                 },
                 role: {
                     required: true
@@ -151,7 +151,7 @@
                 @if(!isset($staff->id))
                 password: {
                     required: true,
-                    minlenth: 8
+                    minlength: 8
                 },
                 confirm_password: {
                     required: true,
@@ -160,6 +160,55 @@
                 @endif
             }
         });
+        $(".save_btn").on("click", function(e) {
+            e.preventDefault();
+            var inputValue = $("#phone_no").val();
+            var bit = validatePhoneNo(inputValue);
+            if(bit == true)
+            {
+                $("#staff_form").submit();
+            }
+        });
+
+        $("#phone_no").on("focusout",function(){
+            var inputValue = $(this).val();
+            validatePhoneNo(inputValue);
+        });
     });
+    function validatePhoneNo(inputValue){
+        if(inputValue == "")
+        {
+            $("#error_section").css("display", "block");
+            $("#error_section").text("Please enter a phone number");
+            return false;
+        }
+        var final_check = inputValue.includes("+");
+        if(!final_check){
+            $("#error_section").css("display", "block");
+            $("#error_section").text("Please enter a valid phone number start with +91");
+            $(".save_btn").attr("disabled",true);
+            return false;
+        }
+
+        inputValue = inputValue.replace('+', '');
+        if (inputValue.substr(0, 2) !== '91') {
+            $("#error_section").css("display", "block");
+            $("#error_section").text("Please enter a valid phone number starting with +91");
+            $(".save_btn").attr("disabled",true);
+            return false;
+        }
+
+        const phonePattern = /^[6-9]\d{11}$/gi;
+        if (phonePattern.test(inputValue) == false) {
+            $("#error_section").css("display", "block");
+            $("#error_section").text("Please enter a valid phone number");
+            $(".save_btn").attr("disabled",true);
+            return false;
+        }
+
+        $("#error_section").css("display", "none");
+        $(".save_btn").attr("disabled",false);
+        return true;
+    }
 </script>
 @endsection

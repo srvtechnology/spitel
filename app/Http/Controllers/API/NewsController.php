@@ -28,7 +28,7 @@ class NewsController extends Controller
     public function index(Request $request)
     {
 		$city = "";
-        $news = News::latest();
+        $news = new News;
 
         $filter_from = date("Y-m-d");
         $filter_to = date("Y-m-d");
@@ -36,6 +36,8 @@ class NewsController extends Controller
         if ($request->has('filter_from') && $request->filter_from != "" && strtotime($request->filter_from) && $request->has('filter_to') && $request->filter_to != "" && strtotime($request->filter_to)) {
             $filter_from = $request->filter_from;
             $filter_to = $request->filter_to;
+            $news = $news->whereDate('created_at', '>=', $filter_from)
+                    ->whereDate('created_at', '<=', $filter_to);
         }
 
         if ($request->has('city') && $request->city != '') {
@@ -43,8 +45,6 @@ class NewsController extends Controller
             $city = $request->city;
         }
 
-        $news = $news->whereDate('created_at', '>=', $filter_from)
-                    ->whereDate('created_at', '<=', $filter_to);
 
         if ($request->has('category_id') && $request->category_id != "") {
             $news = $news->where('category_id', $request->category_id);

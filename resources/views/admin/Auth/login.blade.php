@@ -92,7 +92,7 @@
             return false;
         }
 
-        const phonePattern = /^[6-9]\d{9}$/gi;
+        const phonePattern = /^[6-9]\d{11}$/gi;
         if (phonePattern.test(inputValue) == false) {
             $("#error_section").css("display", "block");
             $("#error_section").text("Please enter a valid phone number");
