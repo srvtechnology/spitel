@@ -27,7 +27,7 @@
 @section('content')
 <div class="row">
     <div class="col-md-12">
-        <form action="{{ route('engagements.add') }}" method="post" enctype='multipart/form-data' id="engagement_form">
+        <form action="{{ route('engagements.add') }}" method="post" enctype='multipart/form-data' id="">
             @csrf
             <div class="card">
                 <div class="card-body">
@@ -44,7 +44,7 @@
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
                                         </span>
-                                    @enderror 
+                                    @enderror
                                 </div>
                             </div>
 
@@ -56,7 +56,7 @@
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
                                         </span>
-                                    @enderror 
+                                    @enderror
                                 </div>
 
                                 <div class="col-md-6">
@@ -66,7 +66,7 @@
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
                                         </span>
-                                    @enderror 
+                                    @enderror
                                 </div>
                             </div>
 
@@ -78,7 +78,7 @@
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
                                         </span>
-                                    @enderror 
+                                    @enderror
                                 </div>
 
                                 <div class="col-md-6">
@@ -88,39 +88,41 @@
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
                                         </span>
-                                    @enderror 
+                                    @enderror
                                 </div>
                             </div>
 
                             <div class="row mt-3">
                                 <div class="col-md-6">
                                     <label for="bride_current_city">Bride Current City</label>
-                                    <select class="form-control @error('bride_current_city') is-invalid @enderror" name="bride_current_city" id="bride_current_city">
+                                    <input type="text" name="bride_current_city" class="form-control @error('bride_current_city') is-invalid @enderror" id="bride_current_city">
+                                    {{--  <select class="form-control @error('bride_current_city') is-invalid @enderror" name="bride_current_city" id="bride_current_city">
                                         <option value="">Choose...</option>
                                         @foreach($cities as $item)
                                         <option value="{{$item->id}}">{{$item->city}}</option>
                                         @endforeach
-                                    </select>
+                                    </select>  --}}
                                     @error('bride_current_city')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
                                         </span>
-                                    @enderror 
+                                    @enderror
                                 </div>
 
                                 <div class="col-md-6">
                                     <label for="bride_native_city">Bride Native City</label>
-                                    <select class="form-control @error('bride_native_city') is-invalid @enderror" name="bride_native_city" id="bride_native_city">
+                                    <input type="text" name="bride_native_city" class="form-control @error('bride_native_city') is-invalid @enderror" id="bride_native_city">
+                                    {{--  <select class="form-control @error('bride_native_city') is-invalid @enderror" name="bride_native_city" id="bride_native_city">
                                         <option value="">Choose...</option>
                                         @foreach($cities as $item)
                                         <option value="{{$item->id}}">{{$item->city}}</option>
                                         @endforeach
-                                    </select>
+                                    </select>  --}}
                                     @error('bride_native_city')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
                                         </span>
-                                    @enderror 
+                                    @enderror
                                 </div>
                             </div>
                         </div>
@@ -187,12 +189,13 @@
                             <div class="row mt-3">
                                 <div class="col-md-6">
                                     <label for="groom_current_city">Groom Current City</label>
-                                    <select class="form-control @error('groom_current_city') is-invalid @enderror" name="groom_current_city" id="groom_current_city">
+                                    <input type="text" name="groom_current_city" class="form-control @error('groom_current_city') is-invalid @enderror" id="groom_current_city">
+                                    {{--  <select class="form-control @error('groom_current_city') is-invalid @enderror" name="groom_current_city" id="groom_current_city">
                                         <option value="">Choose...</option>
                                         @foreach($cities as $item)
                                         <option value="{{$item->id}}">{{$item->city}}</option>
                                         @endforeach
-                                    </select>
+                                    </select>  --}}
                                     @error('groom_current_city')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>
@@ -202,12 +205,13 @@
 
                                 <div class="col-md-6">
                                     <label for="groom_native_city">Groom Native City</label>
-                                    <select class="form-control @error('groom_native_city') is-invalid @enderror" name="groom_native_city" id="groom_native_city">
+                                    <input type="text" name="groom_native_city" class="form-control @error('groom_native_city') is-invalid @enderror" id="groom_native_city">
+                                    {{--  <select class="form-control @error('groom_native_city') is-invalid @enderror" name="groom_native_city" id="groom_native_city">
                                         <option value="">Choose...</option>
                                         @foreach($cities as $item)
                                         <option value="{{$item->id}}">{{$item->city}}</option>
                                         @endforeach
-                                    </select>
+                                    </select>  --}}
                                     @error('groom_native_city')
                                         <span class="invalid-feedback" role="alert">
                                             <strong>{{ $message }}</strong>

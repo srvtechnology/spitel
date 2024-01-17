@@ -37,7 +37,7 @@
                     <div class="col-md-12">
                         <div class="d-flex justify-content-center">
                             <div class="col-md-3 border mb-3">
-                                @if(!is_null($engagement->bride_image_url) AND file_exists("storage/".$engagement->bride_image_url))
+                                @if(!empty($engagement->bride_image_url) AND file_exists("storage/".$engagement->bride_image_url))
                                     <img src="{{ asset("storage/".$engagement->bride_image_url) }}" class="img-fluid img-avatar">
                                 @else
                                     <br><br><br><br><br>
@@ -83,7 +83,8 @@
                         <div class="form-group">
                             <label for="firstname">Bride Current City</label><br>
                             <div class="info">
-                                {{ $engagement->bride_cur_city->city }}
+                                {{--  {{ $engagement->bride_cur_city->city }}  --}}
+                                {{ $engagement->bride_current_city }}
                             </div>
                         </div>
                     </div>
@@ -91,7 +92,8 @@
                         <div class="form-group">
                             <label for="firstname">Bride Native City</label><br>
                             <div class="info">
-                                {{ $engagement->bride_nat_city->city }}
+                                {{--  {{ $engagement->bride_nat_city->city }}  --}}
+                                {{ $engagement->bride_native_city }}
                             </div>
                         </div>
                     </div>
@@ -155,7 +157,8 @@
                         <div class="form-group">
                             <label for="firstname">Groom Current City</label><br>
                             <div class="info">
-                                {{ $engagement->groom_cur_city->city }}
+                                {{--  {{ $engagement->groom_cur_city->city }}  --}}
+                                {{ $engagement->groom_current_city }}
                             </div>
                         </div>
                     </div>
@@ -163,7 +166,8 @@
                         <div class="form-group">
                             <label for="firstname">Groom Native City</label><br>
                             <div class="info">
-                                {{ $engagement->groom_nat_city->city }}
+                                {{--  {{ $engagement->groom_nat_city->city }}  --}}
+                                {{ $engagement->groom_native_city }}
                             </div>
                         </div>
                     </div>

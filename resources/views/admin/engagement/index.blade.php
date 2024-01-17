@@ -47,8 +47,10 @@
                             <td>{{ $row->id }}</td>
                             <td>{{ $row->bride_name }}</td>
                             <td>{{ $row->groom_name }}</td>
-                            <td>{{ $row->bride_cur_city->city }}</td>
-                            <td>{{ $row->groom_cur_city->city }}</td>
+                            <td>{{ $row->bride_current_city }}</td>
+                            <td>{{ $row->groom_current_city }}</td>
+                            {{--  <td>{{ $row->bride_cur_city->city }}</td>
+                            <td>{{ $row->groom_cur_city->city }}</td>  --}}
                             <td>
                                 <span class='action'>
                                     @if(Auth::user()->is_view)
