@@ -42,7 +42,20 @@ class CutomerController extends Controller
 
     public function index(Request $request)
     {
-        $customers = Customer::with('native_city')->whereNotNull('first_name')->orderBy('id','ASC')->paginate(10);
+        $query = Customer::with('native_city')->whereNotNull('first_name')->orderBy('id','ASC');
+        if(!empty(request('type')) AND request('type') == 'approve'){
+            $query->where('system_status', 1);
+        }
+        elseif(!empty(request('type')) AND request('type') == 'pending'){
+            $query->where('system_status', 0);
+        }
+        elseif(!empty(request('type')) AND request('type') == 'expired'){
+            $query->whereNotNull('date_of_expired');
+        }elseif(!empty(request('type')) AND request('type') == 'active'){
+            $query->whereDate('end', '>=', date('Y-m-d'))
+            ->where('system_status', 1);
+        }
+        $customers = $query->paginate(10);
         // $customers = Customer::with('native_city')->orderByDesc('id')->orderByDesc('avtar_url')->get();
 
         $approved_customer = Customer::where('system_status', 1)
@@ -498,5 +511,51 @@ class CutomerController extends Controller
         $customer->end = $request->end;
         $customer->save();
         return redirect("/admin/customer");
+    }
+
+    public function customer_ajax_search(Request $request)
+    {
+        $customers = Customer::with('native_city','surname','city')->whereNotNull('first_name')
+        ->where('first_name','LIKE','%'.$request->search.'%')
+        ->orderBy('id','ASC')->get();
+
+        foreach($customers as $customer)
+        {
+            if(!empty($customer->avtar_url))
+            {
+                $avatar_path =$customer->avtar_url;
+                if(app()->environment() == "local")
+                {
+                    $explode = explode("public/",$customer->avtar_url);
+                    $avatar_url = $explode[1];
+                    $avatar_path =$avatar_url;
+                    $customer['avtar_url'] = asset("/".$avatar_url);
+                }
+            }
+            if(!empty($avatar_path) AND file_exists($avatar_path))
+            {
+                $customer['avtar_url'] = asset("/".$avatar_url);
+            }
+            else{
+                $customer['avtar_url'] = null;
+            }
+            if(Auth::user()->is_update)
+            {
+                $customer['is_update'] = true;
+                $customer['is_update_url'] = url('/admin/customer/add/'.$customer->id.'?city='.request('city'));
+            }
+            if(Auth::user()->is_delete)
+            {
+                $customer['is_delete'] = true;
+                $customer['is_delete_url'] = url('/admin/customer/delete/'.$customer->id.'?city='.request('city'));
+            }
+            if(Auth::user()->is_view)
+            {
+                $customer['is_view'] = true;
+                $customer['is_view_url'] = url('/admin/customer/view/'.$customer->id.'?city='.request('city'));
+            }
+        }
+
+        return $customers;
     }
 }

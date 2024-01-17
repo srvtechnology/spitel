@@ -29,36 +29,44 @@
 @section('content')
 <div class="row">
     <div class="col-md-3 cursor-poiner" data-status="1">
-        <div class="card">
-            <div class="card-body bg-warning">
-                <h3 style="color: white;">{{$approved_customer}}</h3>
-                <p style="color: white;">Approve Customer</p>
+        <a href="{{ URL::current() }}?type=approve">
+            <div class="card">
+                <div class="card-body bg-warning">
+                    <h3 style="color: white;">{{$approved_customer}}</h3>
+                    <p style="color: white;">Approve Customer</p>
+                </div>
             </div>
-        </div>
+        </a>
     </div>
 	<div class="col-md-3 cursor-poiner" data-status="3">
-        <div class="card">
-            <div class="card-body bg-success">
-                <h3 style="color: white;">{{$active_customer}}</h3>
-                <p style="color: white;">Active Customer</p>
+        <a href="{{ URL::current() }}?type=active">
+            <div class="card">
+                <div class="card-body bg-success">
+                    <h3 style="color: white;">{{$active_customer}}</h3>
+                    <p style="color: white;">Active Customer</p>
+                </div>
             </div>
-        </div>
+        </a>
     </div>
     <div class="col-md-3 cursor-poiner" data-status="0">
-        <div class="card">
-            <div class="card-body bg-info">
-                <h3 style="color: white;">{{$pending_customer}}</h3>
-                <p style="color: white;">Pending Customer</p>
+        <a href="{{ URL::current() }}?type=pending">
+            <div class="card">
+                <div class="card-body bg-info">
+                    <h3 style="color: white;">{{$pending_customer}}</h3>
+                    <p style="color: white;">Pending Customer</p>
+                </div>
             </div>
-        </div>
+        </a>
     </div>
     <div class="col-md-3 cursor-poiner" data-status="2">
-        <div class="card">
-            <div class="card-body bg-danger">
-                <h3 style="color: white;">{{$membership_expired_customer}}</h3>
-                <p style="color: white;">Membership Expired Customer</p>
+        <a href="{{ URL::current() }}?type=expired">
+            <div class="card">
+                <div class="card-body bg-danger">
+                    <h3 style="color: white;">{{$membership_expired_customer}}</h3>
+                    <p style="color: white;">Membership Expired Customer</p>
+                </div>
             </div>
-        </div>
+        </a>
     </div>
 </div>
 <div class="row">
@@ -83,6 +91,9 @@
                         <a href="{{ route('customer.add') }}" class="btn btn-success link-btn">+ Add new Registration</a>
                     </div>
                     @endif
+                    <div class="col-md-4 float-right">
+                        <input type="text" class="form-control" name="search" id="customer_search" placeholder="Search...">
+                    </div>
                     <div class="table-responsive">
                         <table class="customer-datatable table table-hover">
                             <thead>
@@ -104,7 +115,7 @@
                                     <th>Actions</th>
                                 </tr>
                             </thead>
-                            <tbody>
+                            <tbody id="customer_tbody">
                                 @if(count($customers) > 0)
                                 @foreach($customers as $customer)
                                 <tr>
@@ -215,6 +226,86 @@
         $(".sidebar-link").removeClass('active');
         $(".customer-link").addClass('active');
 
+        $("#customer_search").on("keyup", function () {
+            var search_title = $(this).val();
+            $.ajax({
+                url: "{{ route('customer.customer_ajax_search') }}",
+                method: "POST",
+                data: {
+                    _token : "{{ csrf_token() }}",
+                    search: search_title
+                },
+                success: function (response) {
+                    console.log(response);
+                    $("#customer_tbody").html('');
+
+                    if (response.length > 0) {
+                        $.each(response, function (index, value) {
+                            let statusBadge;
+                            let customerAvatar;
+                            let action_btn;
+
+                            if (value.system_status == 1) {
+                                statusBadge = `<span class='badge badge-success' title='From:- ${value.start} End:- ${value.end}'>Approved</span>`;
+                            } else if (value.system_status == 0) {
+                                statusBadge = `<span class='badge badge-info'>Pending</span>`;
+                            } else {
+                                statusBadge = `<span class='badge badge-danger' title='${value.comment}'>Reject</span>`;
+                            }
+
+                            if (value.avtar_url != null) {
+                                customerAvatar = `<img src="${value.avtar_url}" alt='Avatar' width='50' style='border-radius: 50%;'>`;
+                            } else {
+                                customerAvatar = `-`;
+                            }
+
+                            if (value.is_update) {
+                                action_btn = `<a href="${value.is_update_url}"><i class='fa-solid text-success fa-pen-to-square'></i></a>&nbsp;`;
+                            }
+
+                            if (value.is_delete) {
+                                action_btn += `<a href="${value.is_delete_url}" onclick='return confirm("Are you sure?")'><i class='fa-solid fa-trash text-danger'></i></a>&nbsp;`;
+                            }
+
+                            if (value.is_view) {
+                                action_btn += `<a href="${value.is_view_url}"><i class='fa-solid fa-eye text-primary'></i></a>&nbsp;`;
+                            }
+
+                            $("#customer_tbody").append(`
+                                <tr>
+                                    <td><input type='checkbox' name='customer_ids[]' class='customer_ids' value='${value.id}'></td>
+                                    <td>${value.id}</td>
+                                    <td>${customerAvatar}</td>
+                                    <td>${value.first_name} ${value.father_husband_name} ${value.surname.name}</td>
+                                    <td>${value.phone_no}</td>
+                                    <td>${value.city.city}</td>
+                                    <td>${value.native_city.city}</td>
+                                    <td>${value.company_firm_name}</td>
+                                    <td>${value.date_of_expired}</td>
+                                    <td>${statusBadge}</td>
+                                    <td><a href="${value.view_url}" class='btn btn-dark btn-sm'>View Family Member</a></td>
+                                    <td><a href="${value.add_url}" class='btn btn-warning btn-sm'>Add Family Member</a></td>
+                                    <td>
+                                        <span class='action'>
+                                            ${action_btn}
+                                        </span>
+                                    </td>
+                                </tr>
+                            `);
+                        });
+                    }
+
+
+
+
+                },
+                error: function (xhr, status, error) {
+                    console.error(xhr, status, error);
+                }
+            });
+        });
+
+
         var date = new Date();
         var filter_from = new Date(date.getFullYear(), date.getMonth(), 1);
         var filter_to = new Date(date.getFullYear(), date.getMonth() + 1, 0);
@@ -282,7 +373,8 @@
         @endif
 
         $('.customer-datatable').DataTable({
-            paging: false
+            paging: false,
+            searching:false,
         });
 
 
