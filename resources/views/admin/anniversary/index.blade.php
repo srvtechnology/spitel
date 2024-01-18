@@ -48,6 +48,9 @@
                         <a href="{{ route('anniversary.add') }}" class="btn btn-success link-btn">+ Add Anniversary</a>
                     </div> -->
                     @endif
+                    <div class="col-md-4 float-right">
+                        <input type="text" class="form-control" name="search" id="custom_search" placeholder="Search...">
+                    </div>
                     <table class="anniversary-datatable table">
                         <thead>
                             <tr>
@@ -61,7 +64,7 @@
                                 <th>Anniversary Date</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody id="anniversary_tbody">
                             @foreach ($anniversary as $row)
                             <tr>
                                 <td>{{ $row->id }}</td>
@@ -106,7 +109,7 @@
 
                         </tbody>
                     </table>
-                    <div class="d-flex justify-content-center">
+                    <div class="d-flex justify-content-center" id="laravel_pagination">
                         {{ $anniversary->appends(request()->query())->links() }}
                     </div>
                     <div class="row mt-3 mt-3">
@@ -222,7 +225,36 @@
         });
 
         $('.anniversary-datatable').DataTable({
-            paging:false
+            paging:false,
+            searching:false,
+        });
+
+        $("#custom_search").on("keyup", function () {
+            var search_title = $(this).val();
+            if(search_title == null)
+            {
+                return false;
+            }
+            $("#anniversary_tbody").html('Loading.....');
+            $("#laravel_pagination").addClass("d-none");
+            $.ajax({
+                url: "{{ route('anniversary.ajax_search') }}",
+                method: "POST",
+                data: {
+                    _token : "{{ csrf_token() }}",
+                    search: search_title
+                },
+                success: function (response) {
+                    if (response.length > 0) {
+                        $("#anniversary_tbody").html('');
+                        $("#anniversary_tbody").html(response);
+                    }
+
+                },
+                error: function (xhr, status, error) {
+                    console.error(xhr, status, error);
+                }
+            });
         });
         var table = $('.anniversary-datatable_JKBDSKB').DataTable({
             processing: true,

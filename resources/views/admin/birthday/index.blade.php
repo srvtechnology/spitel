@@ -50,6 +50,9 @@
                         @endif
                         --}}
                     </div>
+                    <div class="col-md-4 float-right">
+                        <input type="text" class="form-control" name="search" id="custom_search" placeholder="Search...">
+                    </div>
                     <table class="birthday-datatable table">
                         <thead>
                             <tr>
@@ -64,7 +67,7 @@
                                 <!-- <th>Actions</th> -->
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody id="birthday_tbody">
                             @foreach($birthday as $row)
                             <tr>
                                 <td>{{ $row->id }}</td>
@@ -107,7 +110,7 @@
                             @endforeach
                         </tbody>
                     </table>
-                    <div class="d-flex justify-content-center">
+                    <div class="d-flex justify-content-center" id="laravel_pagination">
                         {{ $birthday->appends(request()->query())->links() }}
                     </div>
                     <div class="row mt-3 mt-3">
@@ -144,7 +147,36 @@
         @endif
 
         $('.birthday-datatable').DataTable({
-            paging:false
+            paging:false,
+            searching:false,
+        });
+
+        $("#custom_search").on("keyup", function () {
+            var search_title = $(this).val();
+            if(search_title == null)
+            {
+                return false;
+            }
+            $("#birthday_tbody").html('Loading.....');
+            $("#laravel_pagination").addClass("d-none");
+            $.ajax({
+                url: "{{ route('birthday.ajax_search') }}",
+                method: "POST",
+                data: {
+                    _token : "{{ csrf_token() }}",
+                    search: search_title
+                },
+                success: function (response) {
+                    if (response.length > 0) {
+                        $("#birthday_tbody").html('');
+                        $("#birthday_tbody").html(response);
+                    }
+
+                },
+                error: function (xhr, status, error) {
+                    console.error(xhr, status, error);
+                }
+            });
         });
 
         var table = $('.birthday-datatable_kajsbdad').DataTable({

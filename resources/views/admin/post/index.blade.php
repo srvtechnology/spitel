@@ -33,6 +33,9 @@
                         <a href="{{ route('post.add') }}" class="btn btn-success link-btn">+ Add Post</a>
                     </div>
                     @endif
+                    <div class="col-md-4 float-right">
+                        <input type="text" class="form-control" name="search" id="custom_search" placeholder="Search...">
+                    </div>
                     <table class="post-datatable table table-hover">
                         <thead>
                             <tr>
@@ -48,7 +51,7 @@
                                 <th>Actions</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody class="post_tbody">
                             @foreach($posts as $post)
                             <tr>
                                 <td><input type='checkbox' name='post_ids[]' class='post_ids' value='{{ $post->id }}'></td>
@@ -175,7 +178,91 @@
         @endif
 
         $('.post-datatable').DataTable({
-            paging:false
+            paging:false,
+            searching:false,
+        });
+
+        $("#custom_search").on("keyup", function () {
+            var search_title = $(this).val();
+            if(search_title == null)
+            {
+                return false;
+            }
+
+            $.ajax({
+                url: "{{ route('post.post_ajax_search') }}",
+                method: "POST",
+                data: {
+                    _token : "{{ csrf_token() }}",
+                    search: search_title
+                },
+                success: function (response) {
+                    if (response.length > 0) {
+                        $(".post_tbody").html('');
+                        $.each(response, function (index, value) {
+                            let statusBadge = null;
+                            let customerAvatar = null;
+                            let action_btn = null;
+                            let approvBadge = null;
+                            let rowImage = null;
+
+                            if (value.post_url != null) {
+                                rowImage = `<img src="${value.post_url}" alt='Avatar' height='120px;' width='120' style='border-radius: 50px;overflow: hidden;'>`;
+                            } else {
+                                rowImage = `-`;
+                            }
+
+                            if (value.is_approved == 0) {
+                                approvBadge = `<span class='badge badge-secondary'>Pending</span>`;
+                            } else if (value.is_approved == 1) {
+                                approvBadge = `<span class='badge badge-info'>Approved</span>`;
+                            } else {
+                                approvBadge = `<span class='badge badge-danger'>Rejected</span>`;
+                            }
+
+                            if (value.is_active) {
+                                statusBadge = `<a class='btn btn-danger btn-sm' href='/admin/post/active-inactive/${value.id}/inactive'>Make Inactive</a>`;
+                            }
+                            if (value.is_update) {
+                                action_btn = `<a href="${value.is_update_url}"><i class='fa-solid text-success fa-pen-to-square'></i></a>&nbsp;`;
+                            }
+
+                            if (value.is_delete) {
+                                action_btn += `<a href="${value.is_delete_url}" onclick='return confirm("Are you sure?")'><i class='fa-solid fa-trash text-danger'></i></a>&nbsp;`;
+                            }
+
+                            if (value.is_view) {
+                                action_btn += `<a href="${value.is_view_url}"><i class='fa-solid fa-eye text-primary'></i></a>&nbsp;`;
+                            }
+
+                            $(".post_tbody").append(`
+                                <tr>
+                                    <td><input type='checkbox' name='post_ids[]' class='customer_ids' value='${value.id}'></td>
+                                    <td>${value.id}</td>
+                                    <td>${value.customer.first_name} ${value.customer.father_husband_name} ${value.customer.surname.name}</td>
+                                    <td>${rowImage}</td>
+                                    <td>${approvBadge}</td>
+                                    <td>
+                                        ${statusBadge}
+                                        <a class='btn btn-success btn-sm' href='/admin/post/active-inactive/${value.id}/active'>Make Active</a>
+                                    </td>
+                                    <td>${value.description}</td>
+                                    <td>
+                                        <span class='action'>
+                                            ${action_btn}
+                                        </span>
+                                    </td>
+                                </tr>
+                            `);
+                        });
+
+                    }
+
+                },
+                error: function (xhr, status, error) {
+                    console.error(xhr, status, error);
+                }
+            });
         });
         var table = $('.post-datatable_sadsad').DataTable({
             processing: true,

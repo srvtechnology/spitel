@@ -30,6 +30,9 @@
                     <a href="{{ route('engagements.add') }}" class="btn btn-success link-btn">+ Add Engagement</a>
                 </div>
                 @endif
+                <div class="col-md-4 float-right mb-3">
+                    <input type="text" class="form-control" name="search" id="custom_search" placeholder="Search...">
+                </div>
                 <table class="post-datatable table table-hover">
                     <thead>
                         <tr>
@@ -41,7 +44,7 @@
                             <th>Actions</th>
                         </tr>
                     </thead>
-                    <tbody>
+                    <tbody id="engagement_tbody">
                         @foreach($engagements as $row)
                         <tr>
                             <td>{{ $row->id }}</td>
@@ -107,8 +110,59 @@
         @endif
 
         $('.post-datatable').DataTable({
-            paging:false
+            paging:false,
+            searching:false,
         });
+
+        $("#custom_search").on("keyup", function () {
+            var search_title = $(this).val();
+            if(search_title == null)
+            {
+                return false;
+            }
+
+            $.ajax({
+                url: "{{ route('engagements.engagements_ajax_search') }}",
+                method: "POST",
+                data: {
+                    _token : "{{ csrf_token() }}",
+                    search: search_title
+                },
+                success: function (response) {
+                    if (response.length > 0) {
+                        $("#engagement_tbody").html('');
+                        $.each(response, function (index, value) {
+                            let statusBadge = null;
+                            let action_btn = null;
+                            if (value.is_view) {
+                                action_btn = `<a href="${value.is_view_url}" ><i class='fa-solid fa-eye text-primary'></i></a>&nbsp;`;
+                            }
+
+                            $("#engagement_tbody").append(`
+                                <tr>
+                                    <td>${value.id}</td>
+                                    <td>${value.bride_name}</td>
+                                    <td>${value.groom_name}</td>
+                                    <td>${value.bride_current_city}</td>
+                                    <td>${value.groom_current_city}</td>
+                                    <td>
+                                        <span class='action'>
+                                            ${action_btn}
+                                        </span>
+                                    </td>
+                                </tr>
+                            `);
+                        });
+
+                    }
+
+                },
+                error: function (xhr, status, error) {
+                    console.error(xhr, status, error);
+                }
+            });
+        });
+
         var table = $('.post-datatable_sadsad').DataTable({
             processing: true,
             serverSide: true,

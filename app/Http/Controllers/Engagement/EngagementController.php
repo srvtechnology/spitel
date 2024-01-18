@@ -2,16 +2,18 @@
 
 namespace App\Http\Controllers\Engagement;
 
-use App\Http\Controllers\Controller;
-use App\Http\Requests\Engagement\EngagementRequest;
-use App\Http\Resources\Engagement\EngagementResource;
 use App\Models\City;
 use App\Models\Engagement;
-use Hidehalo\Nanoid\Client as NanoId;
-use Illuminate\Contracts\View\View;
+use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Contracts\View\View;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
+use Hidehalo\Nanoid\Client as NanoId;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Resources\Json\JsonResource;
+use App\Http\Requests\Engagement\EngagementRequest;
+use App\Http\Resources\Engagement\EngagementResource;
 
 class EngagementController extends Controller
 {
@@ -63,5 +65,27 @@ class EngagementController extends Controller
         $engagement = Engagement::findOrFail($id);
 
         return view('admin.engagement.detail')->with(compact('engagement'));
+    }
+
+    public function engagements_ajax_search(Request $request)
+    {
+        $row = [];
+        $engagements = Engagement::orderBy('id', 'DESC')
+        ->where(function($query) use ($request) {
+            $query->where('bride_name', 'LIKE', '%' . $request->search . '%')
+                ->orWhere('groom_name', 'LIKE', '%' . $request->search . '%')
+                ->orWhere('bride_current_city', 'LIKE', '%' . $request->search . '%')
+                ->orWhere('groom_current_city', 'LIKE', '%' . $request->search . '%');
+        })->get();
+        foreach($engagements as $row)
+        {
+            if(Auth::user()->is_view)
+            {
+                $row['is_view'] = true;
+                $row['is_view_url'] = url('/admin/engagements/view/'.$row->id.'?city='.request('city'));
+            }
+        }
+
+        return $engagements;;
     }
 }

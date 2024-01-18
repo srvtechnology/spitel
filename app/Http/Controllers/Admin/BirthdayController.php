@@ -213,4 +213,83 @@ class BirthdayController extends Controller
 
         return back();
     }
+
+    public function ajax_search(Request $request)
+    {
+        $customer = Customer::select('id', 'first_name', 'phone_no', 'date_of_birth', 'avtar_url', 'father_husband_name', 'surname_id')
+            ->with('surname')
+            ->whereNotNull('date_of_birth')
+            ->whereNotNull('first_name');
+
+        $family_member = FamilyMember::select('id', 'cust_id', 'name', 'phone_no', 'date_of_birth', 'avtar')
+            ->whereNotNull('date_of_birth')
+            ->whereNotNull('name');
+
+        $searchTerm = $request->search;
+
+        $customer = $customer->where(function ($query) use ($searchTerm) {
+            $query->where('first_name', 'LIKE', '%' . $searchTerm . '%')
+                ->orWhere('phone_no', 'LIKE', '%' . $searchTerm . '%')
+                ->orWhere('date_of_birth', 'LIKE', '%' . $searchTerm . '%');
+        });
+
+        $family_member = $family_member->where(function ($query) use ($searchTerm) {
+            $query->where('name', 'LIKE', '%' . $searchTerm . '%')
+                ->orWhere('phone_no', 'LIKE', '%' . $searchTerm . '%')
+                ->orWhere('date_of_birth', 'LIKE', '%' . $searchTerm . '%');
+        });
+
+        $customer = $customer->latest('id')->get();
+        $family_member = $family_member->latest('id')->get();
+
+        $birthday = $customer->merge($family_member);
+
+        $html = '';
+
+        foreach ($birthday as $row) {
+            $html .= '<tr>';
+            $html .= '<td>' . $row->id . '</td>';
+            $html .= '<td>';
+
+            if (class_basename($row) == "Customer") {
+                $avatar_url = $avatar_path = null;
+
+                if (!empty($row->avtar_url)) {
+                    $avatar_path = $row->avtar_url;
+
+                    if (app()->environment() == "local") {
+                        $explode = explode("public/", $row->avtar_url);
+                        $avatar_url = $explode[1];
+                        $avatar_path = $avatar_url;
+                        $row['avtar_url'] = asset("/" . $avatar_url);
+                    }
+                }
+
+                if (!empty($avatar_path) && file_exists($avatar_path)) {
+                    $html .= '<img src="' . $row->avtar_url . '" alt="Avtar" width="120" style="border-radius: 50px;">';
+                } else {
+                    $html .= '-';
+                }
+
+            } else {
+                $html .= (!is_null($row->avtar)) ? '<img src="' . $row->avtar . '" alt="Avtar" width="120" style="border-radius: 50px;">' : '';
+            }
+
+            $html .= '</td>';
+            $html .= '<td>';
+
+            if (class_basename($row) == "Customer") {
+                $html .= $row->first_name . ' ' . $row->father_husband_name . ' ' . (!is_null($row->surname) ? $row->surname->name : '');
+            } else {
+                $html .= $row->name;
+            }
+
+            $html .= '</td>';
+            $html .= '<td>' . $row->phone_no . '</td>';
+            $html .= '<td>' . date("d-m-Y", strtotime($row->date_of_birth)) . '</td>';
+            $html .= '</tr>';
+        }
+
+        return $html;
+    }
 }

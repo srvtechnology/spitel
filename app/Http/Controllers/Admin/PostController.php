@@ -293,4 +293,58 @@ class PostController extends Controller
         $post->save();
         return back();
     }
+
+    public function post_ajax_search(Request $request)
+    {
+        $posts = Post::with('customer.surname')->orderBy('created_at', 'desc')
+        ->whereHas('customer', function ($query) use ($request) {
+            $query->where('first_name', 'LIKE', '%' . $request->input('search') . '%');
+        })
+        ->get();
+
+        foreach($posts as $row)
+        {
+            $avatar_url = $avatar_path= null;
+            if ($row->type == 1) {
+                if(!empty($row->post_url))
+                {
+                    $avatar_path = $row->post_url;
+                    $post_explode = explode("/post/",$row->post_url);
+                    $avatar_path = "post/".$post_explode[1];
+                    if(app()->environment() != "local")
+                    {
+                        $avatar_path =$avatar_path;
+                        $row['post_url'] = asset("public/".$avatar_path);
+                    }
+                }
+                if(!empty($avatar_path) AND file_exists($avatar_path))
+                {
+                    $row['post_url'] = asset("/".$avatar_path);
+                }
+                else{
+                    $row['post_url'] = null;
+                }
+            }
+            else{
+                $row['post_url'] = null;
+            }
+            if(Auth::user()->is_update)
+            {
+                $row['is_update'] = true;
+                $row['is_update_url'] = url('/admin/post/add/'.$row->id.'?city='.request('city'));
+            }
+            if(Auth::user()->is_delete)
+            {
+                $row['is_delete'] = true;
+                $row['is_delete_url'] = url('/admin/post/delete/'.$row->id.'?city='.request('city'));
+            }
+            if(Auth::user()->is_view)
+            {
+                $row['is_view'] = true;
+                $row['is_view_url'] = url('/admin/post/view/'.$row->id.'?city='.request('city'));
+            }
+        }
+
+        return $posts;
+    }
 }

@@ -109,6 +109,7 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
     // Post
     Route::group(['prefix' => 'post'], function () {
         Route::get('/', [PostController::class, 'index'])->name('post.view');
+        Route::post('/post-ajax-search',  [PostController::class, 'post_ajax_search'])->name('post.post_ajax_search');
         Route::get('/list', [PostController::class, 'list'])->name('post.list');
         Route::get('/add/{id?}', [PostController::class, 'add'])->name('post.add');
         Route::post('/create', [PostController::class, 'create'])->name('post.store');
@@ -238,6 +239,7 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
     // Birthday
     Route::group(['prefix' => 'birthday'], function () {
         Route::get('/', [BirthdayController::class, 'index'])->name('birthday.view');
+        Route::post('/ajax-search',  [BirthdayController::class, 'ajax_search'])->name('birthday.ajax_search');
         Route::get('/add/{id?}', [BirthdayController::class, 'form'])->name('birthday.add');
         Route::post('/create', [BirthdayController::class, 'create'])->name('birthday.store');
         Route::get('/list', [BirthdayController::class, 'birthday_list'])->name('birthday.list');
@@ -248,6 +250,7 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
     // Anniversary
     Route::group(['prefix' => 'anniversary'], function () {
         Route::get('/', [AnniversaryController::class, 'index'])->name('anniversary.view');
+        Route::post('/ajax-search',  [AnniversaryController::class, 'ajax_search'])->name('anniversary.ajax_search');
         Route::get('/list', [AnniversaryController::class, 'list'])->name('anniversary.list');
         Route::get('/add/{id?}', [AnniversaryController::class, 'add'])->name('anniversary.add');
         Route::post('/create', [AnniversaryController::class, 'store'])->name('anniversary.store');
@@ -259,6 +262,7 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
     // Engagement
     Route::group(['prefix' => 'engagements', 'as' => 'engagements.'], function () {
         Route::get('/',[EngagementController::class, 'index'])->name('view');
+        Route::post('/engagements-ajax-search',  [EngagementController::class, 'engagements_ajax_search'])->name('engagements_ajax_search');
         Route::get('/view/{id}',[EngagementController::class, 'view'])->name('detail');
         Route::get('/create',[EngagementController::class, 'add'])->name('add');
         Route::post('/create',[EngagementController::class, 'store']);
