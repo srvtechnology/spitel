@@ -52,7 +52,21 @@
                             <tr>
                                 <td>{{ $row->id }}</td>
                                 <td>
-                                    @if(!is_null($row->avtar))
+                                @php
+                                        $avatar_url = $avatar_path= null;
+                                        if(!empty($row->avtar))
+                                        {
+                                            $avatar_path =$row->avtar;
+                                            if(app()->environment() == "local")
+                                            {
+                                                $explode = explode("public/",$row->avtar);
+                                                $avatar_url = $explode[1];
+                                                $avatar_path =$avatar_url;
+                                                $row['avtar'] = asset("/".$avatar_url);
+                                            }
+                                        }
+                                        @endphp
+                                    @if(!empty($avatar_path) AND file_exists($avatar_path))
                                     <img src='{{ $row->avtar }}' alt='Avtar' width='120' style='border-radius: 50px;'>
                                     @else
                                     -

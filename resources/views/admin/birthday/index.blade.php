@@ -70,7 +70,23 @@
                                 <td>{{ $row->id }}</td>
                                 <td>
                                     @if (class_basename($row) == "Customer")
-                                        @if(!is_null($row->avtar_url)) <img src='". $row->avtar_url ."' alt='Avtar' width='120' style='border-radius: 50px;'> @else - @endif
+                                    @php
+                                        $avatar_url = $avatar_path= null;
+                                        if(!empty($row->avtar_url))
+                                        {
+                                            $avatar_path =$row->avtar_url;
+                                            if(app()->environment() == "local")
+                                            {
+                                                $explode = explode("public/",$row->avtar_url);
+                                                $avatar_url = $explode[1];
+                                                $avatar_path =$avatar_url;
+                                                $row['avtar_url'] = asset("/".$avatar_url);
+                                            }
+                                        }
+                                        @endphp
+                                        @if(!empty($avatar_path) AND file_exists($avatar_path))
+                                        <img src="{{ $row->avtar_url }}" alt='Avtar' width='120' style='border-radius: 50px;'>
+                                        @else - @endif
                                     @else
                                     {{ (!is_null($row->avtar)) ? "<img src='". $row->avtar ."' alt='Avtar' width='120' style='border-radius: 50px;'>" : "" }}
                                     @endif
