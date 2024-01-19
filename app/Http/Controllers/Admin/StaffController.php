@@ -131,4 +131,45 @@ class StaffController extends Controller
         User::destroy($id);
         return back();
     }
+
+    public function ajax_search(Request $request)
+    {
+        if(empty($request->search))
+        {
+            return "no";
+        }
+        $staffs = User::where('phone_no','LIKE','%'.$request->search.'%')->get();
+
+        $html = '';
+
+        foreach ($staffs as $row) {
+            $html .= '<tr>';
+            $html .= '<td>' . $row->id . '</td>';
+            $html .= '<td>' . $row->phone_no . '</td>';
+            $html .= '<td>' . ($row->is_insert ? "Yes" : "No") . '</td>';
+            $html .= '<td>' . ($row->is_update ? "Yes" : "No") . '</td>';
+            $html .= '<td>' . ($row->is_delete ? "Yes" : "No") . '</td>';
+            $html .= '<td>' . ($row->is_view ? "Yes" : "No") . '</td>';
+            $html .= '<td>';
+            $html .= '<span class="action">';
+
+            if (Auth::user()->is_update) {
+                $html .= '<a href="' . url('/admin/staff/add/' . $row->id . '?city=' . request('city')) . '"><i class="fa-solid text-success fa-pen-to-square"></i></a>&nbsp;';
+            }
+
+            if (Auth::user()->is_delete) {
+                $html .= '<a href="' . url('/admin/staff/delete/' . $row->id . '?city=' . request('city')) . '" onclick="return confirm(\'Are you sure?\')"><i class="fa-solid fa-trash text-danger"></i></a>&nbsp;';
+            }
+
+            if (Auth::user()->is_view) {
+                $html .= '<a href="' . url('/admin/staff/view/' . $row->id . '?city=' . request('city')) . '"><i class="fa-solid fa-eye text-primary"></i></a>&nbsp;';
+            }
+
+            $html .= '</span>';
+            $html .= '</td>';
+            $html .= '</tr>';
+        }
+
+        return $html;
+    }
 }

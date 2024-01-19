@@ -33,6 +33,9 @@
                         <a href="{{ route('matrimony.add') }}" class="btn btn-success link-btn">+ Add matrimony</a>
                     </div> -->
                     @endif
+                    <div class="col-md-4 float-right">
+                        <input type="text" class="form-control" name="search" id="custom_search" placeholder="Search...">
+                    </div>
                     <table class="matrimony-datatable table table-hover">
                         <thead>
                             <tr>
@@ -47,7 +50,7 @@
                                 <th>Actions</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody id="matrimony_tbody">
                             @foreach($family_members as $row)
                             <tr>
                                 <td>{{ $row->id }}</td>
@@ -144,7 +147,8 @@
         @endif
 
         $('.matrimony-datatable').DataTable({
-            paging:false
+            paging:false,
+            searching:false,
         });
 
         $('.matrimony-datatable_sahvbajdbsa').DataTable({
@@ -197,6 +201,36 @@
 
         $(".close-modal").on('click', function(){
             $("#reason_modal").modal('hide');
+        });
+        $("#custom_search").on("keyup", function () {
+            var search_title = $(this).val();
+            if(search_title == null)
+            {
+                return false;
+            }
+            $("#matrimony_tbody").html('Loading.....');
+            $("#laravel_pagination").addClass("d-none");
+            $.ajax({
+                url: "{{ route('matrimony.ajax_search') }}",
+                method: "POST",
+                data: {
+                    _token : "{{ csrf_token() }}",
+                    search: search_title
+                },
+                success: function (response) {
+                    console.log('response: ', response);
+                    if (response) {
+                        $("#matrimony_tbody").html('');
+                        $("#matrimony_tbody").html(response);
+                    }
+                    if(response == 'no'){
+                        location.reload();
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error(xhr, status, error);
+                }
+            });
         });
     });
 </script>

@@ -57,6 +57,9 @@
                         @endforeach
                     </select>
                     <button class="btn btn-sm btn-primary search-btn" type="button" id="search-btn">Search</button>
+                    <div class="col-md-4 float-right">
+                        <input type="text" class="form-control" name="search" id="custom_search" placeholder="Search...">
+                    </div>
                     <table class="customer-datatable table">
                         <thead>
                             <tr>
@@ -72,7 +75,7 @@
                                 <th>Actions</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody id="news_tbody">
                             @foreach ($news as $row)
                             <tr>
                                 <td>
@@ -107,7 +110,7 @@
                             @endforeach
                         </tbody>
                     </table>
-                    <div class="d-flex justify-content-center">
+                    <div class="d-flex justify-content-center" id="laravel_pagination">
                         {{ $news->appends(request()->query())->links() }}
                     </div>
                     <div class="row mt-3 mt-3">
@@ -227,7 +230,8 @@
         });
 
         $('.customer-datatable').DataTable({
-            paging:false
+            paging:false,
+            searching:false,
         });
 
         var table = $('.customer-datatable__kjbsakjbd').DataTable({
@@ -285,6 +289,37 @@
 
         $(".close-modal").on('click', function(){
             $("#reason_modal").modal('hide');
+        });
+        $("#custom_search").on("keyup", function () {
+
+            var search_title = $(this).val();
+            if(search_title == null)
+            {
+                return false;
+            }
+            $("#news_tbody").html('Loading.....');
+            $("#laravel_pagination").addClass("d-none");
+            $.ajax({
+                url: "{{ route('news.ajax_search') }}",
+                method: "POST",
+                data: {
+                    _token : "{{ csrf_token() }}",
+                    search: search_title
+                },
+                success: function (response) {
+                    console.log('response: ', response);
+                    if (response) {
+                        $("#news_tbody").html('');
+                        $("#news_tbody").html(response);
+                    }
+                    if(response == 'no'){
+                        location.reload();
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error(xhr, status, error);
+                }
+            });
         });
     });
 </script>

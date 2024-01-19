@@ -32,6 +32,9 @@
                         <a href="{{ route('staff.add') }}" class="btn btn-success">+ Add staff</a>
                     </div>
                     @endif
+                    <div class="col-md-4 float-right mb-3">
+                        <input type="text" class="form-control" name="search" id="custom_search" placeholder="Search...">
+                    </div>
                     <table class="staff-datatable table">
                         <thead>
                             <tr>
@@ -44,7 +47,7 @@
                                 <th>Actions</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody id="staff_tbody">
                             @foreach ($staff as $row)
                             <tr>
                                 <td>{{ $row->id }}</td>
@@ -70,7 +73,7 @@
                             @endforeach
                         </tbody>
                     </table>
-                    <div class="d-flex justify-content-center">
+                    <div class="d-flex justify-content-center" id="laravel_pagination">
                         {{ $staff->appends(request()->query())->links() }}
                     </div>
                     <!-- <div class="row mt-3 mt-3">
@@ -101,8 +104,40 @@
         let i = 1;
 
         $('.staff-datatable').DataTable({
-            paging:false
+            paging:false,
+            searching:false,
         });
+
+        $("#custom_search").on("keyup", function () {
+            var search_title = $(this).val();
+            if(search_title == null)
+            {
+                return false;
+            }
+            $("#staff_tbody").html('Loading.....');
+            $("#laravel_pagination").addClass("d-none");
+            $.ajax({
+                url: "{{ route('staff.ajax_search') }}",
+                method: "POST",
+                data: {
+                    _token : "{{ csrf_token() }}",
+                    search: search_title
+                },
+                success: function (response) {
+                    if (response) {
+                        $("#staff_tbody").html('');
+                        $("#staff_tbody").html(response);
+                    }
+                    if(response == 'no'){
+                        location.reload();
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error(xhr, status, error);
+                }
+            });
+        });
+
         var table = $('.staff-datatable_BSAKJBSKAB').DataTable({
             processing: true,
             serverSide: true,

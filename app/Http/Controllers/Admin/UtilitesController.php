@@ -226,4 +226,40 @@ class UtilitesController extends Controller
         }
         return back();
     }
+    public function utilities_ajax_search(Request $request){
+        // return $request;
+
+        if(!empty($request->search)){
+            $category = UtilitiesCategory::select('id', 'name')->get();
+        $sub_category = UtilitiesSubCategory::select('id', 'name')->get();
+
+        $utilites = Utilites::with('city')->where('name', 'LIKE', '%' . $request->search . '%')->get();
+
+            $html ='';
+            foreach ($utilites as $row) {
+                $html .= '<tr>';
+                $html .= '<td><input type="checkbox" name="news_ids[]" class="news_ids" value="'. $row->id.'"></td>';
+                $html .= '<td>' . $row->id . '</td>';
+                $html .= '<td><img src="' . $row->banner_url . '" alt="Avtar" width="120" style="border-radius: 50px;"></td>';
+                $html .= '<td>' . $row->name . '</td>';
+                $html .= '<td>' . $row->phone_no . '</td>';
+                $html .= '<td>' . $row->address . '</td>';
+                $html .= '<td>';
+                if (!is_null($row->city)) {
+                    $html .= $row->city->city;
+                } else {
+                    $html .= '';
+                }
+                $html .= '</td>';
+                $html .= '<td><span class="action">'.'<a href="'.url("/admin/utilites/add/".$row->id.'?city=""') .'"><i class="fa-solid text-success fa-pen-to-square"></i></a>'.'<a  href="'.url("/admin/utilites/delete/".$row->id.'?city=""') .'" onclick="return confirm("Are you sure?")"><i class="fa-solid fa-trash text-danger"></i></a><a  href="'.url("/admin/utilites/view/".$row->id.'?city=""') .'"><i class="fa-solid fa-eye text-primary"></i></a></span></td>';
+                $html .= '</tr>';
+            }
+
+            return $html;
+
+        }else{
+            return "no";
+        }
+    }
+
 }

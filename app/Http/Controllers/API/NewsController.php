@@ -74,4 +74,5 @@ class NewsController extends Controller
 		$sub_category = $sub_category->get();
     	return response()->json($sub_category);
     }
+
 }

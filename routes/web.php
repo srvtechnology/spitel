@@ -271,6 +271,7 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
     // News category
     Route::group(['prefix' => 'news-category'], function () {
         Route::get('/', [NewsCategoryController::class, 'index'])->name('news-category.view');
+
         Route::get('/add/{id?}', [NewsCategoryController::class, 'add'])->name('news-category.add');
         Route::post('/create', [NewsCategoryController::class, 'store'])->name('news-category.store');
         Route::get('/delete/{id}', [NewsCategoryController::class, 'delete'])->name('news-category.delete');
@@ -289,6 +290,7 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
     // News
     Route::group(['prefix' => 'news'], function () {
         Route::get('/', [NewsController::class, 'index'])->name('news.view');
+        Route::post('/news-ajax-search',  [NewsController::class, 'news_ajax_search'])->name('news.ajax_search');
         Route::get('/list', [NewsController::class, 'list'])->name('news.list');
         Route::get('/add/{id?}', [NewsController::class, 'add'])->name('news.add');
         Route::post('/store', [NewsController::class, 'store'])->name('news.store');
@@ -300,6 +302,7 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
     // Utilites
     Route::group(['prefix' => 'utilites'], function () {
         Route::get('/', [UtilitesController::class, 'index'])->name('utilites.view');
+        Route::post('/utilities-ajax-search',  [UtilitesController::class, 'utilities_ajax_search'])->name('utilities.ajax_search');
         Route::get('/list', [UtilitesController::class, 'utilites_list'])->name('utilites.list');
         Route::get('/add/{id?}', [UtilitesController::class, 'add'])->name('utilites.add');
         Route::post('/store', [UtilitesController::class, 'store'])->name('utilites.store');
@@ -312,6 +315,7 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
     // Matrimony
     Route::group(['prefix' => 'matrimony'], function () {
         Route::get('/', [MatrimonyController::class, 'index'])->name('matrimony.view');
+        Route::post('/matrimony-ajax-search',  [MatrimonyController::class, 'matrimony_ajax_search'])->name('matrimony.ajax_search');
         Route::get('/list', [MatrimonyController::class, 'list'])->name('matrimony.list');
         Route::get('/add/{id?}', [MatrimonyController::class, 'add'])->name('matrimony.add');
         Route::post('/store', [MatrimonyController::class, 'store'])->name('matrimony.store');
@@ -324,6 +328,7 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
     Route::group(['prefix' => 'video'], function () {
         Route::get('/', [VideoController::class, 'index'])->name('video.view');
         Route::get('/list', [VideoController::class, 'list'])->name('video.list');
+        Route::post('/ajax-search',  [VideoController::class, 'ajax_search'])->name('video.ajax_search');
         Route::get('/add/{id?}', [VideoController::class, 'add'])->name('video.add');
         Route::post('/create', [VideoController::class, 'create'])->name('video.create');
         Route::get('/view/{id}', [VideoController::class, 'view'])->name('video.single_view');
@@ -344,6 +349,7 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
     // Staff
     Route::group(['prefix' => 'staff'], function () {
         Route::get('/', [StaffController::class, 'index'])->name('staff.view');
+        Route::post('/ajax-search',  [StaffController::class, 'ajax_search'])->name('staff.ajax_search');
         Route::get('/list', [StaffController::class, 'list'])->name('staff.list');
         Route::get('/add/{id?}', [StaffController::class, 'add'])->name('staff.add');
         Route::post('/create', [StaffController::class, 'store'])->name('staff.store');

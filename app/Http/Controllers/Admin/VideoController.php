@@ -150,4 +150,42 @@ class VideoController extends Controller
         $video->delete();
         return back();
     }
+
+    public function ajax_search(Request $request)
+    {
+        if(empty($request->search))
+        {
+            return "no";
+        }
+        $videos = Video::orderByDesc('id')->get();
+
+        $html = '';
+        foreach ($videos as $row) {
+            $html .= '<tr>';
+            $html .= '<td>' . $row->id . '</td>';
+            $html .= '<td>';
+            if (str_contains($row->video_url, "https://www.youtube.com")) {
+                $html .= '<iframe width="350" height="200" src="' . $row->video_url . '" title="YouTube video player" frameborder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>';
+            } else {
+                $html .= '<video width="200" height="240" controls><source src="' . $row->video_url . '" type="video/mp4"></video>';
+            }
+            $html .= '</td>';
+            $html .= '<td>' . (strlen($row->description) > 50 ? substr($row->description, 0, 50) : $row->description) . '</td>';
+            $html .= '<td>';
+            $html .= '<span class="action">';
+            if (Auth::user()->is_update) {
+                $html .= '<a href="' . url('/admin/video/add/' . $row->id . '?city=' . request('city')) . '"><i class="fa-solid text-success fa-pen-to-square"></i></a>&nbsp;';
+            }
+            if (Auth::user()->is_delete) {
+                $html .= '<a href="' . url('/admin/video/delete/' . $row->id . '?city=' . request('city')) . '" onclick="return confirm(\'Are you sure?\')"><i class="fa-solid fa-trash text-danger"></i></a>&nbsp;';
+            }
+            if (Auth::user()->is_view) {
+                $html .= '<a href="' . url('/admin/video/view/' . $row->id . '?city=' . request('city')) . '"><i class="fa-solid fa-eye text-primary"></i></a>&nbsp;';
+            }
+            $html .= '</span>';
+            $html .= '</td>';
+            $html .= '</tr>';
+        }
+        return $html;
+    }
 }

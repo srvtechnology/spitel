@@ -267,4 +267,37 @@ class NewsController extends Controller
 
         return back();
     }
+    public function news_ajax_search(Request $request){
+        // $response = [];
+        // return $request;
+        if(!empty($request->search)){
+            $news_category = NewsCategory::select('id', 'name')->get();
+            $news_sub_category = NewsSubCategory::select('id', 'name')->get();
+            $news = News::with('city')->where('name', 'LIKE', '%' . $request->search . '%')->get();
+            $html ='';
+            foreach ($news as $row) {
+                $html .= '<tr class="odd">';
+                $html .= '<td><input type="checkbox" name="news_ids[]" class="news_ids" value="'. $row->id.'"></td>';
+                $html .= '<td>' . $row->id . '</td>';
+                $html .= '<td><img src="' . $row->banner_url . '" alt="Avtar" width="120" style="border-radius: 50px;"></td>';
+                $html .= '<td>' . $row->name . '</td>';
+                $html .= '<td>' . date("d-m-Y", strtotime($row->date)) . '</td>';
+                $html .= '<td>' . $row->description . '</td>';
+                $html .= '<td>';
+                if (!is_null($row->city)) {
+                    $html .= $row->city->city;
+                } else {
+                    $html .= '';
+                }
+                $html .= '</td>';
+                $html .= '<td><span class="action">'.'<a href="'.url("/admin/news/add/".$row->id.'?city=""') .'"><i class="fa-solid text-success fa-pen-to-square"></i></a>'.'<a  href="'.url("/admin/news/delete/".$row->id.'?city=""') .'" onclick="return confirm("Are you sure?")"><i class="fa-solid fa-trash text-danger"></i></a><a  href="'.url("/admin/news/view/".$row->id.'?city=""') .'"><i class="fa-solid fa-eye text-primary"></i></a></span></td>';
+                $html .= '</tr>';
+            }
+
+            return $html;
+
+        }else{
+            return "no";
+        }
+    }
 }

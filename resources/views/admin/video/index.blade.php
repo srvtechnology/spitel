@@ -48,7 +48,7 @@
                                 <th>Action</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody id="video_tbody">
                             @foreach ($videos as $row)
                             <tr>
                                 <td>{{ $row->id }}</td>
@@ -77,7 +77,7 @@
                             @endforeach
                         </tbody>
                     </table>
-                    <div class="d-flex justify-content-center">
+                    <div class="d-flex justify-content-center" id="laravel_pagination">
                         {{ $videos->appends(request()->query())->links() }}
                     </div>
 
@@ -116,8 +116,9 @@
         <?php endif ?>
 
         $('.video-datatable').DataTable({
-            paging:false
+            paging:false,
         });
+
         let i = 1;
         var table = $('.video-datatable_JKJKBKJ').DataTable({
             processing: true,

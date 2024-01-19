@@ -57,6 +57,9 @@
                         @endforeach
                     </select>
                     <button class="btn btn-sm btn-primary search-btn" type="button" id="search-btn">Search</button>
+                    <div class="col-md-4 float-right mt-3">
+                        <input type="text" class="form-control" name="search" id="custom_search" placeholder="Search...">
+                    </div>
                     <table class="utilites-datatable table">
                         <thead>
                             <tr>
@@ -72,7 +75,7 @@
                                 <th>Actions</th>
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody id="utilities_tbody">
                             @foreach($utilites as $row)
                             <tr>
                                 <td>
@@ -223,7 +226,8 @@
         });
 
         $('.utilites-datatable').DataTable({
-            paging:false
+            paging:false,
+            searching:false
         });
 
         var table = $('.utilites-datatable_sakjbadbsa').DataTable({
@@ -282,5 +286,41 @@
             $("#reason_modal").modal('hide');
         });
     });
+</script>
+<script>
+    $(document).ready(function(){
+
+        $("#custom_search").on("keyup", function () {
+            var search_title = $(this).val();
+            if(search_title == null)
+            {
+                return false;
+            }
+            $("#utilities_tbody").html('Loading.....');
+            $("#laravel_pagination").addClass("d-none");
+            $.ajax({
+                url: "{{ route('utilities.ajax_search') }}",
+                method: "POST",
+                data: {
+                    _token : "{{ csrf_token() }}",
+                    search: search_title
+                },
+                success: function (response) {
+                    console.log('response: ', response);
+                    if (response) {
+                        $("#utilities_tbody").html('');
+                        $("#utilities_tbody").html(response);
+                    }
+                    if(response == 'no'){
+                        location.reload();
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error(xhr, status, error);
+                }
+            });
+        });
+    });
+
 </script>
 @endsection

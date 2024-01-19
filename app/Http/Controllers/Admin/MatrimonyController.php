@@ -261,4 +261,39 @@ class MatrimonyController extends Controller
         }
         return back();
     }
+    public function matrimony_ajax_search(Request $request){
+        if(!empty($request->search)){
+            $matrimony = FamilyMember::with(['customer','customer.city','panth', 'relationship', 'blood_group'])->where('name', 'LIKE', '%' . $request->search . '%')->get();
+            $html ='';
+            foreach ($matrimony as $row) {
+                $html .= '<tr>';
+                $html .= '<td>' . $row->id . '</td>';
+                $html .= '<td><img src="' . $row->avatar . '" alt="Avtar" width="120" style="border-radius: 50px;"></td>';
+                $html .= '<td>' . $row->name . '</td>';
+                if($row->gender == 1)
+                {
+                    $html .= '<td>Male</td>';
+                }
+                else
+                {
+                    $html .= '<td>Female</td>';
+                }
+
+                $html .= '<td>';
+                if ((isset($row->customer) && !is_null($row->customer))) {
+                    $html .= !empty($row->customer->city) ? $row->customer->city->city : null;
+                } else {
+                    $html .= '';
+                }
+                $html .= '</td>';
+                $html .= '<td><span class="action">'.'<a href="'.url("/admin/family-member/add/".$row->id.'?city=""') .'"><i class="fa-solid text-success fa-pen-to-square"></i></a>'.'<a  href="'.url("/admin/family-member/delete/".$row->id.'?city=""') .'" onclick="return confirm("Are you sure?")"><i class="fa-solid fa-trash text-danger"></i></a><a  href="'.url("/admin/family-member/view/".$row->id.'?city=""') .'"><i class="fa-solid fa-eye text-primary"></i></a></span></td>';
+                $html .= '</tr>';
+            }
+
+            return $html;
+
+        }else{
+            return "no";
+        }
+    }
 }
