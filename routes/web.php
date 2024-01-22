@@ -98,6 +98,7 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
     // Family Member
     Route::group(['prefix' => 'family-member'], function () {
         Route::get('/{customer_id}', [FamilyMemberController::class, 'index'])->name('family_member.view');
+        Route::post('/family-member-ajax-search', [FamilyMemberController::class, 'ajax_search'])->name('family_member.ajax_search');
         Route::get('/list/show', [FamilyMemberController::class, 'list'])->name('family_member.list');
         Route::get('/add/{customer_id}/{id?}', [FamilyMemberController::class, 'add'])->name('family_member.add');
         Route::post('/store', [FamilyMemberController::class, 'store'])->name('family_member.store');

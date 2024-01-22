@@ -29,6 +29,9 @@
             <input type="hidden" name="reason" id="reason">
             <div class="card">
                 <div class="card-body">
+                    <div class="col-md-4 float-right">
+                        <input type="text" class="form-control" name="search" id="custom_search" placeholder="Search...">
+                    </div>
                     <table class="customer-datatable table table-hover">
                         <thead>
                             <tr>
@@ -41,7 +44,51 @@
                                 <th>Actions</th>
                             </tr>
                         </thead>
+                        <tbody id="family_member_tbody">
+                            @foreach($family_member as $row)
+                            <tr>
+                                <td>{{ $row->id }}</td>
+                                <td>
+                                    @php
+                                    if (!empty($row->avtar)) {
+                                        $avatar_path = $row->avtar;
+
+                                        if (app()->environment() == "local") {
+                                            $explode = explode("public/", $row->avtar);
+                                            $avatar_url = $explode[1];
+                                            $avatar_path = $avatar_url;
+                                            $row->avtar = asset("/" . $avatar_url);
+                                        }
+                                    }
+                                    @endphp
+                                    @if (!empty($avatar_path) && file_exists($avatar_path))
+                                    <img src="{{ $row->avtar }}" alt='Avatar' width='120' style='border-radius: 50px;'>
+                                    @else - @endif
+                                </td>
+                                <td>{{ $row->name }}</td>
+                                <td>{{ ($row->gender == 1) ? "Male" : "Female" }}</td>
+                                <td>{{ (!is_null($row->relationship)) ? $row->relationship->name : ""  }}</td>
+                                <td>{{ !empty($row->phone_no) ? $row->phone_no : "-" }}</td>
+                                <td>
+                                    <span class='action'>
+                                        @if(Auth::user()->is_update)
+                                        <a href="{{ url('/admin/family-member/add/'.$row->cust_id.'/'.$row->id.'?city='.request('city')) }}"><i class='fa-solid text-success fa-pen-to-square'></i></a>&nbsp;
+                                        @endif
+                                        @if(Auth::user()->is_delete)
+                                        <a href="{{ url('/admin/family-member/delete/member/'.$row->id.'?city='.request('city')) }}" onclick='return confirm("Are you sure?")'><i class='fa-solid fa-trash text-danger'></i></a>&nbsp;
+                                        @endif
+                                        @if(Auth::user()->is_view)
+                                        <a href="{{ url('/admin/family-member/view/'.$row->id.'?city='.request('city')) }}"><i class='fa-solid fa-eye text-primary'></i></a>&nbsp;
+                                        @endif
+                                    </span>
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
                     </table>
+                    <div class="d-flex justify-content-center" id="laravel_pagination">
+                        {{ $family_member->appends(request()->query())->links() }}
+                    </div>
                     <div class="row mt-3 mt-3">
                         <div class="col-md-12 float-right justify-content-end">
                             <div class="f-flex align-right">
@@ -92,7 +139,43 @@
         global_city = "{{$_GET['city']}}";
         @endif
 
-        var table = $('.customer-datatable').DataTable({
+        $(".customer-datatable").DataTable({
+            paging:false,
+            searching:false,
+        });
+
+        $("#custom_search").on("keyup", function () {
+            var search_title = $(this).val();
+            if(search_title == null)
+            {
+                return false;
+            }
+            $("#family_member_tbody").html('Loading.....');
+            $("#laravel_pagination").addClass("d-none");
+            $.ajax({
+                url: "{{ route('family_member.ajax_search') }}",
+                method: "POST",
+                data: {
+                    _token : "{{ csrf_token() }}",
+                    search: search_title
+                },
+                success: function (response) {
+                    if (response) {
+                        $("#family_member_tbody").html('');
+                        $("#family_member_tbody").html(response);
+                    }
+                    if(response == 'no'){
+                        location.reload();
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error(xhr, status, error);
+                }
+            });
+        });
+
+
+        var table = $('.customer-datatable_KHVBKVJ').DataTable({
             processing: true,
             serverSide: true,
             ajax: {

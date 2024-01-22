@@ -13,8 +13,8 @@ class AuthController extends Controller
     {
        // dd("test");
         // return $request;
-        $type = filter_var($request->email_phone, FILTER_VALIDATE_EMAIL) ? 'email' : 'phone_no';
-        if(Auth::attempt([$type => $request->email_phone, 'password' => $request->password]))
+        $type = filter_var($request->final_email_phone, FILTER_VALIDATE_EMAIL) ? 'email' : 'phone_no';
+        if(Auth::attempt([$type => $request->final_email_phone, 'password' => $request->password]))
         {
             $request->session()->regenerate();
             return redirect('/admin/customer');

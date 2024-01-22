@@ -125,7 +125,7 @@
                                 </div>
                                 <div class="col-md-6">
                                     <label class="form-label">About</label>
-                                    <textarea class="form-control editor" name="about" id="about" cols="5">{!! $family_member->about !!}</textarea>
+                                    <textarea class="form-control editor" name="about" id="about" cols="5">{!! !empty($family_member->about) ? $family_member->about : "" !!}</textarea>
                                 </div>
                             </div>
                             <div class="row">

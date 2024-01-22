@@ -20,7 +20,25 @@ class FamilyMemberController extends Controller
     {
     	$customer = Customer::find($customer_id);
     	if (!is_null($customer)) {
-	    	return view('admin.family_member.index', compact('customer'));
+
+            $city = "";
+            $family_member = FamilyMember::with(['panth', 'relationship', 'blood_group'])
+                                        ->whereNotNull('name');
+
+            if (request('cust_id') && request('cust_id') != '') {
+                $family_member = $family_member->where('cust_id', request('cust_id'));
+            }
+
+            if (request('city_id') && request('city_id') != '') {
+                $family_member = $family_member->whereHas('customer', function($query) use ($request){
+                    $query->where('city_id', request('city_id'));
+                });
+                $city = request('city_id');
+            }
+
+            $family_member = $family_member->paginate(10);
+
+	    	return view('admin.family_member.index', compact('customer','family_member'));
     	}
     	return back();
     }
@@ -179,5 +197,64 @@ class FamilyMemberController extends Controller
     {
     	FamilyMember::destroy($id);
     	return back();
+    }
+
+    public function ajax_search(Request $request)
+    {
+        if (empty($request->search)) {
+            return "no";
+        }
+
+        $family_members = FamilyMember::with(['panth', 'relationship', 'blood_group'])
+            ->whereNotNull('name')
+            ->where('name', 'LIKE', '%' . $request->search . '%')
+            ->get();
+
+        $html = '';
+
+        foreach ($family_members as $row) {
+            $avatar_path = '';
+
+            if (!empty($row->avtar)) {
+                $avatar_path = $row->avtar;
+
+                if (app()->environment() == "local") {
+                    $explode = explode("public/", $row->avtar);
+                    $avatar_url = $explode[1];
+                    $avatar_path = $avatar_url;
+                    $row->avtar = asset("/" . $avatar_url);
+                }
+            }
+
+            $html .= '<tr>';
+            $html .= '<td>' . $row->id . '</td>';
+            $html .= '<td>';
+            if (!empty($avatar_path) && file_exists($avatar_path)) {
+                $html .= '<img src="' . $row->avtar . '" alt="Avatar" width="120" style="border-radius: 50px;">';
+            } else {
+                $html .= '-';
+            }
+            $html .= '</td>';
+            $html .= '<td>' . $row->name . '</td>';
+            $html .= '<td>' . ($row->gender == 1 ? "Male" : "Female") . '</td>';
+            $html .= '<td>' . (!is_null($row->relationship) ? $row->relationship->name : "") . '</td>';
+            $html .= '<td>' . (!empty($row->phone_no) ? $row->phone_no : "-") . '</td>';
+            $html .= '<td>';
+            $html .= '<span class="action">';
+            if (Auth::user()->is_update) {
+                $html .= '<a href="' . url('/admin/family-member/add/' . $row->id . '?city=' . request('city')) . '"><i class="fa-solid text-success fa-pen-to-square"></i></a>&nbsp;';
+            }
+            if (Auth::user()->is_delete) {
+                $html .= '<a href="' . url('/admin/family-member/delete/' . $row->id . '?city=' . request('city')) . '" onclick="return confirm(\'Are you sure?\')"><i class="fa-solid fa-trash text-danger"></i></a>&nbsp;';
+            }
+            if (Auth::user()->is_view) {
+                $html .= '<a href="' . url('/admin/family-member/view/' . $row->id . '?city=' . request('city')) . '"><i class="fa-solid fa-eye text-primary"></i></a>&nbsp;';
+            }
+            $html .= '</span>';
+            $html .= '</td>';
+            $html .= '</tr>';
+        }
+
+        return $html;
     }
 }

@@ -56,9 +56,16 @@
                             <h3 class="text-center text-info" style="    padding-bottom: 50px;">JYM LOGIN</h3>
                             <div class="alert alert-danger" role="alert" id="error_section" style="display: none;"></div>
                             <div class="form-group">
-                                <label for="username" class="text-info">Email / phone no</label><br>
-                                <input type="text" name="email_phone" id="email_phone" class="form-control" required>
+                                <label for="username" class="text-info">Phone no</label><br>
+                                <div class="input-group">
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text">+91</span>
+                                    </div>
+                                    <input type="text" name="email_phone" id="email_phone" class="form-control" required>
+                                    <input type="hidden" name="final_email_phone" id="final_email_phone">
+                                </div>
                             </div>
+
                             <div class="form-group">
                                 <label for="password" class="text-info">Password:</label><br>
                                 <input type="password" name="password" id="password" class="form-control" required>
@@ -85,21 +92,16 @@
 <script>
     function validateForm() {
         var inputValue = $("#email_phone").val();
-        inputValue = inputValue.replace('+', '');
-        if (inputValue.substr(0, 2) !== '91') {
-            $("#error_section").css("display", "block");
-            $("#error_section").text("Please enter a valid phone number starting with +91");
-            return false;
-        }
 
-        const phonePattern = /^[6-9]\d{11}$/gi;
+        const phonePattern = /^\d{10}$/g;
         if (phonePattern.test(inputValue) == false) {
-            $("#error_section").css("display", "block");
-            $("#error_section").text("Please enter a valid phone number");
+            $("#error_section").css("display", "block").text("Please enter a valid 10-digit phone number");
             return false;
         }
 
-        return true; // Allow form submission
+        var finalEmailPhone = "+91" + inputValue;
+        $("#final_email_phone").val(finalEmailPhone);
+        return true;
     }
 </script>
 
