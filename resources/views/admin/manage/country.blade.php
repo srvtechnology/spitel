@@ -47,6 +47,13 @@
                                 <th>Actions</th>
                             </tr>
                         </thead>
+                        <tbody class="surname_tbody">
+                            <tr>
+                                <td></td>
+                                <td></td>
+                                <td></td>
+                            </tr>
+                        </tbody>
                     </table>
                 </div>
             </div>
@@ -104,8 +111,43 @@
         $(".close-modal").click(function(){
             $("#modal").modal('hide');
         });
+        $('.surname-datatable').DataTable({
+            searching:false,
+            paging:false,
+        });
+
+        $("#custom_search").on("keyup", function () {
+            var search_title = $(this).val();
+            if(search_title == null)
+            {
+                return false;
+            }
+            $("#staff_tbody").html('Loading.....');
+            $("#laravel_pagination").addClass("d-none");
+            $.ajax({
+                url: "{{ route('staff.ajax_search') }}",
+                method: "POST",
+                data: {
+                    _token : "{{ csrf_token() }}",
+                    search: search_title
+                },
+                success: function (response) {
+                    if (response) {
+                        $("#staff_tbody").html('');
+                        $("#staff_tbody").html(response);
+                    }
+                    if(response == 'no'){
+                        location.reload();
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error(xhr, status, error);
+                }
+            });
+        });
+
         var i = 1;
-        var table = $('.surname-datatable').DataTable({
+        var table = $('.surname-datatable_NDSBKJDWBGKS').DataTable({
             processing: true,
             serverSide: true,
             ajax: {

@@ -178,7 +178,7 @@
                             </tbody>
                         </table>
                     </div>
-                    <div class="d-flex justify-content-center">
+                    <div class="d-flex justify-content-center" id="laravel_pagination">
                         {{ $customers->appends(request()->query())->links() }}
                     </div>
                     <div class="row mt-3 mt-3">
@@ -236,14 +236,17 @@
                     search: search_title
                 },
                 success: function (response) {
-                    console.log(response);
                     $("#customer_tbody").html('');
-
+                    if(response == "no")
+                    {
+                        location.reload();
+                    }
                     if (response.length > 0) {
+                        $("#laravel_pagination").addClass("d-none");
                         $.each(response, function (index, value) {
-                            let statusBadge;
-                            let customerAvatar;
-                            let action_btn;
+                            var statusBadge;
+                            var customerAvatar;
+                            var action_btn;
 
                             if (value.system_status == 1) {
                                 statusBadge = `<span class='badge badge-success' title='From:- ${value.start} End:- ${value.end}'>Approved</span>`;
@@ -276,12 +279,12 @@
                                     <td><input type='checkbox' name='customer_ids[]' class='customer_ids' value='${value.id}'></td>
                                     <td>${value.id}</td>
                                     <td>${customerAvatar}</td>
-                                    <td>${value.first_name} ${value.father_husband_name} ${value.surname.name}</td>
+                                    <td>${value.first_name} ${value.father_husband_name} ${value.surname?.name }</td>
                                     <td>${value.phone_no}</td>
-                                    <td>${value.city.city}</td>
-                                    <td>${value.native_city.city}</td>
+                                    <td>${value.city? value.city.city : ""}</td>
+                                    <td>${value.native_city? value.native_city.city : ""}</td>
                                     <td>${value.company_firm_name}</td>
-                                    <td>${value.date_of_expired}</td>
+                                    <td>${value.date_of_expired ?? "-"}</td>
                                     <td>${statusBadge}</td>
                                     <td><a href="${value.view_url}" class='btn btn-dark btn-sm'>View Family Member</a></td>
                                     <td><a href="${value.add_url}" class='btn btn-warning btn-sm'>Add Family Member</a></td>

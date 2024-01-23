@@ -515,8 +515,19 @@ class CutomerController extends Controller
 
     public function customer_ajax_search(Request $request)
     {
-        $customers = Customer::with('native_city','surname','city')->whereNotNull('first_name')
-        ->where('first_name','LIKE','%'.$request->search.'%')
+        if(empty($request->search))
+        {
+            return "no";
+        }
+        // $customers = Customer::with('native_city','surname','city')
+        // ->where('first_name','LIKE','%'.$request->search.'%')
+        // ->orWhere('phone_no', 'LIKE', '%' . $request->search . '%')
+        // ->orderBy('id','ASC')->get();
+        $customers = Customer::with('native_city','surname','city')
+        ->where(function($query) use ($request) {
+            $query->where('first_name', 'LIKE', '%' . $request->search . '%')
+                ->orWhere('phone_no', 'LIKE', '%' . $request->search . '%');
+        })
         ->orderBy('id','ASC')->get();
 
         foreach($customers as $customer)
