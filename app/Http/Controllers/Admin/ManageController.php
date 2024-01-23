@@ -86,7 +86,8 @@ class ManageController extends Controller
 
     public function countryIndex()
     {
-        return view('admin.manage.country');
+        $countrys = Country::latest('id')->paginate(10);
+        return view('admin.manage.country')->with(compact('countrys'));
     }
 
     public function countryList(Request $request)
@@ -109,6 +110,39 @@ class ManageController extends Controller
                         ->rawColumns(['action'])
                         ->escapeColumns([])
                         ->make(true);
+    }
+
+    public function country_ajax_search(Request $request)
+    {
+        if(empty($request->search))
+        {
+            return "no";
+        }
+
+        $countrys = Country::where('name','LIKE','%'.$request->search.'%')->get();
+        $html = '';
+
+        foreach ($countrys as $row) {
+            $html .= '<tr>';
+            $html .= '<td>' . $row->id . '</td>';
+            $html .= '<td>' . $row->name . '</td>';
+            $html .= '<td>';
+            $html .= '<span class="action">';
+
+            if (Auth::user()->is_update) {
+                $html .= '<a href="javascript:void(0)" class="edit" data-id="'.$row->id.'" data-name="'.$row->name.'"><i class="fa-solid text-success fa-pen-to-square"></i></a>&nbsp;';
+            }
+
+            if (Auth::user()->is_delete) {
+                $html .= '<a href="' . url('/admin/manage/delete/country/' . $row->id) . '" onclick="return confirm(\'Are you sure?\')"><i class="fa-solid fa-trash text-danger"></i></a>&nbsp;';
+            }
+
+            $html .= '</span>';
+            $html .= '</td>';
+            $html .= '</tr>';
+        }
+
+        return $html;
     }
 
     public function countryStore(Request $request)
@@ -180,12 +214,14 @@ class ManageController extends Controller
 
     public function surnameIndex()
     {
-        return view('admin.manage.surname');
+        $surname = Surname::latest('id')->paginate(10);
+        return view('admin.manage.surname')->with(compact('surname'));
     }
 
     public function stateIndex()
     {
-        return view('admin.manage.state');
+        $surname = State::latest('id')->paginate(10);
+        return view('admin.manage.state')->with(compact('surname'));
     }
 
     public function stateList(Request $request)
@@ -207,6 +243,40 @@ class ManageController extends Controller
                         ->rawColumns(['action'])
                         ->escapeColumns([])
                         ->make(true);
+    }
+
+    public function state_ajax_search(Request $request)
+    {
+        if(empty($request->search))
+        {
+            return "no";
+        }
+
+        $states = State::where('name','LIKE','%'.$request->search.'%')->get();
+        $html = '';
+
+        foreach ($states as $row) {
+            $html .= '<tr>';
+            $html .= '<td>' . $row->id . '</td>';
+            $html .= '<td>' . $row->country->name ?? '<span class="text text-danger">Deleted</span>' . '</td>';
+            $html .= '<td>' . $row->name . '</td>';
+            $html .= '<td>';
+            $html .= '<span class="action">';
+
+            if (Auth::user()->is_update) {
+                $html .= '<a href="javascript:void(0)" class="edit" data-id="'.$row->id.'" data-country_id="'.$row->country_id.'" data-name="'.$row->name.'"><i class="fa-solid text-success fa-pen-to-square"></i></a>&nbsp;';
+            }
+
+            if (Auth::user()->is_delete) {
+                $html .= '<a href="' . url('/admin/manage/delete/state/' . $row->id) . '" onclick="return confirm(\'Are you sure?\')"><i class="fa-solid fa-trash text-danger"></i></a>&nbsp;';
+            }
+
+            $html .= '</span>';
+            $html .= '</td>';
+            $html .= '</tr>';
+        }
+
+        return $html;
     }
 
     public function statestore(Request $request)
@@ -232,7 +302,42 @@ class ManageController extends Controller
 
     public function panthIndex()
     {
-        return view('admin.manage.panth');
+        $panth = Panth::latest('id')->paginate(10);
+
+        return view('admin.manage.panth')->with(compact('panth'));
+    }
+
+    public function panth_ajax_search(Request $request)
+    {
+        if(empty($request->search))
+        {
+            return "no";
+        }
+
+        $panth = Panth::where('name','LIKE','%'.$request->search.'%')->get();
+        $html = '';
+
+        foreach ($panth as $row) {
+            $html .= '<tr>';
+            $html .= '<td>' . $row->id . '</td>';
+            $html .= '<td>' . $row->name . '</td>';
+            $html .= '<td>';
+            $html .= '<span class="action">';
+
+            if (Auth::user()->is_update) {
+                $html .= '<a href="javascript:void(0)" class="edit" data-id="'.$row->id.'"  data-name="'.$row->name.'"><i class="fa-solid text-success fa-pen-to-square"></i></a>&nbsp;';
+            }
+
+            if (Auth::user()->is_delete) {
+                $html .= '<a href="' . url('/admin/manage/delete/panth/' . $row->id) . '" onclick="return confirm(\'Are you sure?\')"><i class="fa-solid fa-trash text-danger"></i></a>&nbsp;';
+            }
+
+            $html .= '</span>';
+            $html .= '</td>';
+            $html .= '</tr>';
+        }
+
+        return $html;
     }
 
     public function panthList()
@@ -319,8 +424,9 @@ class ManageController extends Controller
     public function cityIndex()
     {
         $states = State::all();
+        $cities = City::with('state')->latest('id')->paginate(10);
 
-        return view('admin.manage.city', compact('states'));
+        return view('admin.manage.city', compact('states','cities'));
     }
 
     public function cityList(Request $request)
@@ -344,6 +450,40 @@ class ManageController extends Controller
                         ->make(true);
     }
 
+    public function city_ajax_search(Request $request)
+    {
+        if(empty($request->search))
+        {
+            return "no";
+        }
+
+        $states = City::where('city','LIKE','%'.$request->search.'%')->get();
+        $html = '';
+
+        foreach ($states as $row) {
+            $html .= '<tr>';
+            $html .= '<td>' . $row->id . '</td>';
+            $html .= '<td>' . $row->state->name ?? '<span class="text text-danger">Deleted</span>' . '</td>';
+            $html .= '<td>' . $row->city . '</td>';
+            $html .= '<td>';
+            $html .= '<span class="action">';
+
+            if (Auth::user()->is_update) {
+                $html .= '<a href="javascript:void(0)" class="edit" data-id="'.$row->id.'" data-state_id="'.$row->state_id.'" data-name="'.$row->name.'"><i class="fa-solid text-success fa-pen-to-square"></i></a>&nbsp;';
+            }
+
+            if (Auth::user()->is_delete) {
+                $html .= '<a href="' . url('/admin/manage/delete/city/' . $row->id) . '" onclick="return confirm(\'Are you sure?\')"><i class="fa-solid fa-trash text-danger"></i></a>&nbsp;';
+            }
+
+            $html .= '</span>';
+            $html .= '</td>';
+            $html .= '</tr>';
+        }
+
+        return $html;
+    }
+
     public function citystore(Request $request)
     {
         if (!$request->has('id') && $request->id == '') {
@@ -363,6 +503,39 @@ class ManageController extends Controller
         $city->state_id = $request->state_id;
         $city->save();
         return back();
+    }
+
+    public function surname_ajax_search(Request $request)
+    {
+        if(empty($request->search))
+        {
+            return "no";
+        }
+
+        $surname = Surname::where('name','LIKE','%'.$request->search.'%')->get();
+        $html = '';
+
+        foreach ($surname as $row) {
+            $html .= '<tr>';
+            $html .= '<td>' . $row->id . '</td>';
+            $html .= '<td>' . $row->name . '</td>';
+            $html .= '<td>';
+            $html .= '<span class="action">';
+
+            if (Auth::user()->is_update) {
+                $html .= '<a href="javascript:void(0)" class="edit-surname" data-id="'.$row->id.'" data-surname="'.$row->name.'"><i class="fa-solid text-success fa-pen-to-square"></i></a>&nbsp;';
+            }
+
+            if (Auth::user()->is_delete) {
+                $html .= '<a href="' . url('/admin/manage/delete/surname/' . $row->id) . '" onclick="return confirm(\'Are you sure?\')"><i class="fa-solid fa-trash text-danger"></i></a>&nbsp;';
+            }
+
+            $html .= '</span>';
+            $html .= '</td>';
+            $html .= '</tr>';
+        }
+
+        return $html;
     }
 
     public function surnameList(Request $request)
@@ -620,7 +793,9 @@ class ManageController extends Controller
 
     public function slideIndex()
     {
-        return view('admin.manage.slide');
+        $slide = Slide::latest('id')->paginate(10);
+
+        return view('admin.manage.slide')->with(compact('slide'));
     }
 
     public function slideList(Request $request)

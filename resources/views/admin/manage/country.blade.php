@@ -39,6 +39,9 @@
                         </div>
                         @endif
                     </div>
+                    <div class="col-md-4 float-right">
+                        <input type="text" class="form-control" name="search" id="custom_search" placeholder="Search...">
+                    </div>
                     <table class="surname-datatable table">
                         <thead>
                             <tr>
@@ -48,13 +51,27 @@
                             </tr>
                         </thead>
                         <tbody class="surname_tbody">
+                            @foreach($countrys as $row)
                             <tr>
-                                <td></td>
-                                <td></td>
-                                <td></td>
+                                <td>{{ $row->id }}</td>
+                                <td>{{ $row->name }}</td>
+                                <td>
+                                    <span class='action'>
+                                        @if(Auth::user()->is_update)
+                                        <a href='javascript:void(0)' class='edit' data-id="{{ $row->id }}" data-name="{{ $row->name }}"><i class='fa-solid text-success fa-pen-to-square'></i></a>&nbsp;
+                                        @endif
+                                        @if(Auth::user()->is_delete)
+                                        <a href="{{ url('/admin/manage/delete/country/'.$row->id) }}" onclick='return confirm("Are you sure?")'><i class='fa-solid fa-trash text-danger'></i></a>&nbsp;
+                                        @endif
+                                    </span>
+                                </td>
                             </tr>
+                            @endforeach
                         </tbody>
                     </table>
+                    <div class="d-flex justify-content-center" id="laravel_pagination">
+                        {{ $countrys->appends(request()->query())->links() }}
+                    </div>
                 </div>
             </div>
         </form>
@@ -122,10 +139,10 @@
             {
                 return false;
             }
-            $("#staff_tbody").html('Loading.....');
+            $(".surname_tbody").html('Loading.....');
             $("#laravel_pagination").addClass("d-none");
             $.ajax({
-                url: "{{ route('staff.ajax_search') }}",
+                url: "{{ route('manage.country.ajax_search') }}",
                 method: "POST",
                 data: {
                     _token : "{{ csrf_token() }}",
@@ -133,8 +150,8 @@
                 },
                 success: function (response) {
                     if (response) {
-                        $("#staff_tbody").html('');
-                        $("#staff_tbody").html(response);
+                        $(".surname_tbody").html('');
+                        $(".surname_tbody").html(response);
                     }
                     if(response == 'no'){
                         location.reload();

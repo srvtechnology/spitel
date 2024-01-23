@@ -286,8 +286,8 @@
                                     <td>${value.company_firm_name}</td>
                                     <td>${value.date_of_expired ?? "-"}</td>
                                     <td>${statusBadge}</td>
-                                    <td><a href="${value.view_url}" class='btn btn-dark btn-sm'>View Family Member</a></td>
-                                    <td><a href="${value.add_url}" class='btn btn-warning btn-sm'>Add Family Member</a></td>
+                                    <td><a href="${value.view_family_member}" class='btn btn-dark btn-sm'>View Family Member</a></td>
+                                    <td><a href="${value.add_family_member}" class='btn btn-warning btn-sm'>Add Family Member</a></td>
                                     <td>
                                         <span class='action'>
                                             ${action_btn}
@@ -307,6 +307,7 @@
                 }
             });
         });
+
 
 
         var date = new Date();

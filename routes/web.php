@@ -126,6 +126,7 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
         // State
         Route::group(['prefix' => 'state'], function () {
             Route::get('/', [ManageController::class, 'stateIndex'])->name('manage.state.index');
+            Route::post('/ajax-search', [ManageController::class, 'state_ajax_search'])->name('manage.state.ajax_search');
             Route::get('/list', [ManageController::class, 'stateList'])->name('manage.state.list');
             Route::post('/store', [ManageController::class, 'statestore'])->name('manage.state.store');
         });
@@ -133,6 +134,7 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
         // City
         Route::group(['prefix' => 'city'], function () {
             Route::get('/', [ManageController::class, 'cityIndex'])->name('manage.city.index');
+            Route::post('/ajax-search', [ManageController::class, 'city_ajax_search'])->name('manage.city.ajax_search');
             Route::get('/list', [ManageController::class, 'cityList'])->name('manage.city.list');
             Route::post('/store', [ManageController::class, 'citystore'])->name('manage.city.store');
         });
@@ -140,6 +142,7 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
         // surname
         Route::group(['prefix' => 'surname'], function () {
             Route::get('/', [ManageController::class, 'surnameIndex'])->name('manage.surname.index');
+            Route::post('/ajax-search', [ManageController::class, 'surname_ajax_search'])->name('manage.surname.ajax_search');
             Route::get('/list', [ManageController::class, 'surnameList'])->name('manage.surname.list');
             Route::post('/store', [ManageController::class, 'storeList'])->name('manage.surname.store');
         });
@@ -175,6 +178,7 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
         // Panth
         Route::group(['prefix' => 'panth'], function () {
             Route::get('/', [ManageController::class, 'panthIndex'])->name('manage.panth.index');
+            Route::post('/ajax-search', [ManageController::class, 'panth_ajax_search'])->name('manage.panth.ajax_search');
             Route::get('/list', [ManageController::class, 'panthList'])->name('manage.panth.list');
             Route::post('/store', [ManageController::class, 'panthStore'])->name('manage.panth.store');
         });
@@ -196,6 +200,7 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
         // Panth
         Route::group(['prefix' => 'slide'], function () {
             Route::get('/', [ManageController::class, 'slideIndex'])->name('manage.slide.index');
+            Route::post('/ajax-search', [ManageController::class, 'slide_ajax_search'])->name('manage.slide.ajax_search');
             Route::get('/list', [ManageController::class, 'slideList'])->name('manage.slide.list');
             Route::post('/store', [ManageController::class, 'slideStore'])->name('manage.slide.store');
         });
@@ -203,6 +208,7 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
         // Country
         Route::group(['prefix' => 'country'], function () {
             Route::get('/', [ManageController::class, 'countryIndex'])->name('manage.country.index');
+            Route::post('/ajax-search', [ManageController::class, 'country_ajax_search'])->name('manage.country.ajax_search');
             Route::get('/list', [ManageController::class, 'countryList'])->name('manage.country.list');
             Route::post('/store', [ManageController::class, 'countryStore'])->name('manage.country.store');
         });

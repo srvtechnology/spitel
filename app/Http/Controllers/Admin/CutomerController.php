@@ -519,10 +519,6 @@ class CutomerController extends Controller
         {
             return "no";
         }
-        // $customers = Customer::with('native_city','surname','city')
-        // ->where('first_name','LIKE','%'.$request->search.'%')
-        // ->orWhere('phone_no', 'LIKE', '%' . $request->search . '%')
-        // ->orderBy('id','ASC')->get();
         $customers = Customer::with('native_city','surname','city')
         ->where(function($query) use ($request) {
             $query->where('first_name', 'LIKE', '%' . $request->search . '%')
@@ -565,6 +561,8 @@ class CutomerController extends Controller
                 $customer['is_view'] = true;
                 $customer['is_view_url'] = url('/admin/customer/view/'.$customer->id.'?city='.request('city'));
             }
+            $customer['view_family_member'] = url('/admin/family-member/'.$customer->id);
+            $customer['add_family_member'] = url('/admin/family-member/add/'.$customer->id);
         }
 
         return $customers;

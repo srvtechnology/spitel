@@ -36,7 +36,7 @@ class FamilyMemberController extends Controller
                 $city = request('city_id');
             }
 
-            $family_member = $family_member->paginate(10);
+            $family_member = $family_member->OrderBy('id','DESC')->paginate(10);
 
 	    	return view('admin.family_member.index', compact('customer','family_member'));
     	}
