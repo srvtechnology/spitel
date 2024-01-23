@@ -39,7 +39,10 @@
                         </div>
                         @endif
                     </div>
-                    <table class="surname-datatable table">
+                    <div class="col-md-4 float-right">
+                        <input type="text" class="form-control" name="search" id="custom_search" placeholder="Search...">
+                    </div>
+                    <table class="realtionship_datatable table">
                         <thead>
                             <tr>
                                 <th>Sr#</th>
@@ -47,7 +50,28 @@
                                 <th>Actions</th>
                             </tr>
                         </thead>
+                        <tbody class="realtionship_datatable_tbody">
+                            @foreach($relationship as $row)
+                            <tr>
+                                <td>{{ $row->id }}</td>
+                                <td>{{ $row->name }}</td>
+                                <td>
+                                    <span class='action'>
+                                        @if(Auth::user()->is_update)
+                                        <a href='javascript:void(0)' class='edit' data-id='{{ $row->id }}' data-name='{{ $row->name }}'><i class='fa-solid text-success fa-pen-to-square'></i></a>&nbsp;
+                                        @endif
+                                        @if(Auth::user()->is_delete)
+                                        <a href="{{ url('/admin/manage/delete/relationship/'.$row->id) }}" onclick='return confirm("Are you sure?")'><i class='fa-solid fa-trash text-danger'></i></a>&nbsp;
+                                        @endif
+                                    </span>
+                                </td>
+                            </tr>
+                            @endforeach
+                        </tbody>
                     </table>
+                    <div class="d-flex justify-content-center" id="laravel_pagination">
+                        {{ $relationship->appends(request()->query())->links() }}
+                    </div>
                 </div>
             </div>
         </form>
@@ -104,6 +128,42 @@
         $(".close-modal").click(function(){
             $("#modal").modal('hide');
         });
+
+        $('.realtionship_datatable').DataTable({
+            searching:false,
+            paging:false,
+        });
+
+        $("#custom_search").on("keyup", function () {
+            var search_title = $(this).val();
+            if(search_title == null)
+            {
+                return false;
+            }
+            $(".realtionship_datatable_tbody").html('Loading.....');
+            $("#laravel_pagination").addClass("d-none");
+            $.ajax({
+                url: "{{ route('manage.relationship.ajax_search') }}",
+                method: "POST",
+                data: {
+                    _token : "{{ csrf_token() }}",
+                    search: search_title
+                },
+                success: function (response) {
+                    if (response) {
+                        $(".realtionship_datatable_tbody").html('');
+                        $(".realtionship_datatable_tbody").html(response);
+                    }
+                    if(response == 'no'){
+                        location.reload();
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error(xhr, status, error);
+                }
+            });
+        });
+
         var i = 1;
         var table = $('.surname-datatable').DataTable({
             processing: true,

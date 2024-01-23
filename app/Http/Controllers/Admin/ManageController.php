@@ -380,7 +380,41 @@ class ManageController extends Controller
 
     public function relationshipIndex()
     {
-        return view('admin.manage.relationship');
+        $relationship = Relationship::latest('id')->paginate(10);
+        return view('admin.manage.relationship')->with(compact('relationship'));
+    }
+
+    public function relationship_ajax_search(Request $request)
+    {
+        if(empty($request->search))
+        {
+            return "no";
+        }
+
+        $relationship = Relationship::where('name','LIKE','%'.$request->search.'%')->get();
+        $html = '';
+
+        foreach ($relationship as $row) {
+            $html .= '<tr>';
+            $html .= '<td>' . $row->id . '</td>';
+            $html .= '<td>' . $row->name . '</td>';
+            $html .= '<td>';
+            $html .= '<span class="action">';
+
+            if (Auth::user()->is_update) {
+                $html .= '<a href="javascript:void(0)" class="edit" data-id="'.$row->id.'"  data-name="'.$row->name.'"><i class="fa-solid text-success fa-pen-to-square"></i></a>&nbsp;';
+            }
+
+            if (Auth::user()->is_delete) {
+                $html .= '<a href="' . url('/admin/manage/delete/relationship/' . $row->id) . '" onclick="return confirm(\'Are you sure?\')"><i class="fa-solid fa-trash text-danger"></i></a>&nbsp;';
+            }
+
+            $html .= '</span>';
+            $html .= '</td>';
+            $html .= '</tr>';
+        }
+
+        return $html;
     }
 
     public function relationshipList()
@@ -796,6 +830,39 @@ class ManageController extends Controller
         $slide = Slide::latest('id')->paginate(10);
 
         return view('admin.manage.slide')->with(compact('slide'));
+    }
+
+    public function slide_ajax_search(Request $request)
+    {
+        if(empty($request->search))
+        {
+            return "no";
+        }
+
+        $slide = Slide::where('name','LIKE','%'.$request->search.'%')->get();
+        $html = '';
+
+        foreach ($slide as $row) {
+            $html .= '<tr>';
+            $html .= '<td>' . $row->id . '</td>';
+            $html .= '<td>' . $row->name . '</td>';
+            $html .= '<td>';
+            $html .= '<span class="action">';
+
+            if (Auth::user()->is_update) {
+                $html .= '<a href="javascript:void(0)" class="edit" data-id="'.$row->id.'" data-name="'.$row->name.'"><i class="fa-solid text-success fa-pen-to-square"></i></a>&nbsp;';
+            }
+
+            if (Auth::user()->is_delete) {
+                $html .= '<a href="' . url('/admin/manage/delete/slide/' . $row->id) . '" onclick="return confirm(\'Are you sure?\')"><i class="fa-solid fa-trash text-danger"></i></a>&nbsp;';
+            }
+
+            $html .= '</span>';
+            $html .= '</td>';
+            $html .= '</tr>';
+        }
+
+        return $html;
     }
 
     public function slideList(Request $request)

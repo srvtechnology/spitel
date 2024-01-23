@@ -186,6 +186,7 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
         // Relationship
         Route::group(['prefix' => 'relationship'], function () {
             Route::get('/', [ManageController::class, 'relationshipIndex'])->name('manage.relationship.index');
+            Route::post('/ajax-search', [ManageController::class, 'relationship_ajax_search'])->name('manage.relationship.ajax_search');
             Route::get('/list', [ManageController::class, 'relationshipList'])->name('manage.relationship.list');
             Route::post('/store', [ManageController::class, 'relationshipStore'])->name('manage.relationship.store');
         });

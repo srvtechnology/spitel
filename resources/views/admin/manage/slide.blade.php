@@ -42,7 +42,7 @@
                     <div class="col-md-4 float-right">
                         <input type="text" class="form-control" name="search" id="custom_search" placeholder="Search...">
                     </div>
-                    <table class="panth-datatable table">
+                    <table class="slide-datatable table">
                         <thead>
                             <tr>
                                 <th>Sr#</th>
@@ -50,7 +50,7 @@
                                 <th>Actions</th>
                             </tr>
                         </thead>
-                        <tbody class="panth_datatable_tbody">
+                        <tbody class="slide_datatable_tbody">
                             @foreach($slide as $row)
                             <tr>
                                 <td>{{ $row->id }}</td>
@@ -61,7 +61,7 @@
                                         <a href='javascript:void(0)' class='edit' data-id='{{ $row->id }}' data-name='{{ $row->name }}'><i class='fa-solid text-success fa-pen-to-square'></i></a>&nbsp;
                                         @endif
                                         @if(Auth::user()->is_delete)
-                                        <a href="{{ url('/admin/manage/delete/panth/'.$row->id) }}" onclick='return confirm("Are you sure?")'><i class='fa-solid fa-trash text-danger'></i></a>&nbsp;
+                                        <a href="{{ url('/admin/manage/delete/slide/'.$row->id) }}" onclick='return confirm("Are you sure?")'><i class='fa-solid fa-trash text-danger'></i></a>&nbsp;
                                         @endif
                                     </span>
                                 </td>
@@ -128,7 +128,7 @@
         $(".close-modal").click(function(){
             $("#modal").modal('hide');
         });
-        $('.panth-datatable').DataTable({
+        $('.slide-datatable').DataTable({
             searching:false,
             paging:false,
         });
@@ -139,7 +139,7 @@
             {
                 return false;
             }
-            $(".panth_datatable_tbody").html('Loading.....');
+            $(".slide_datatable_tbody").html('Loading.....');
             $("#laravel_pagination").addClass("d-none");
             $.ajax({
                 url: "{{ route('manage.slide.ajax_search') }}",
@@ -150,8 +150,8 @@
                 },
                 success: function (response) {
                     if (response) {
-                        $(".panth_datatable_tbody").html('');
-                        $(".panth_datatable_tbody").html(response);
+                        $(".slide_datatable_tbody").html('');
+                        $(".slide_datatable_tbody").html(response);
                     }
                     if(response == 'no'){
                         location.reload();
