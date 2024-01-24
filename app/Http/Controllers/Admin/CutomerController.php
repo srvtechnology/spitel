@@ -528,6 +528,8 @@ class CutomerController extends Controller
 
         foreach($customers as $customer)
         {
+            $avatar_url = null;
+            $avatar_path = null;
             if(!empty($customer->avtar_url))
             {
                 $avatar_path =$customer->avtar_url;

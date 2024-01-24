@@ -244,9 +244,9 @@
                     if (response.length > 0) {
                         $("#laravel_pagination").addClass("d-none");
                         $.each(response, function (index, value) {
-                            var statusBadge;
-                            var customerAvatar;
-                            var action_btn;
+                            var statusBadge = null;
+                            var customerAvatar = null;
+                            var action_btn = null;
 
                             if (value.system_status == 1) {
                                 statusBadge = `<span class='badge badge-success' title='From:- ${value.start} End:- ${value.end}'>Approved</span>`;

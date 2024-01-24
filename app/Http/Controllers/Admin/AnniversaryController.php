@@ -293,12 +293,13 @@ class AnniversaryController extends Controller
         $html = '';
 
         foreach ($anniversary as $row) {
+            $avatar_url = null;
+            $avatar_path = null;
             $html .= '<tr>';
             $html .= '<td>' . $row->id . '</td>';
             $html .= '<td>';
 
             if (class_basename($row) == "Customer") {
-                $avatar_url = $avatar_path = null;
 
                 if (!empty($row->avtar_url)) {
                     $avatar_path = $row->avtar_url;
