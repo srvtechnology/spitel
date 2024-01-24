@@ -27,7 +27,9 @@ class ManageController extends Controller
 {
     public function utilitesSubCategoryIndex()
     {
-        return view('admin.manage.utilities_sub_category');
+        $sub_category = UtilitiesSubCategory::latest('id')->paginate(10);
+
+        return view('admin.manage.utilities_sub_category')->with(compact('sub_category'));
     }
 
     public function utilitesSubCategoryList(Request $request)
@@ -167,7 +169,8 @@ class ManageController extends Controller
 
     public function utilitesCategoryIndex()
     {
-        return view('admin.manage.utilities_category');
+        $utilitiesCategory = UtilitiesCategory::latest('id')->paginate(10);
+        return view('admin.manage.utilities_category')->with(compact('utilitiesCategory'));
     }
 
     public function utilitesCategoryList(Request $request)
@@ -678,7 +681,8 @@ class ManageController extends Controller
 
     public function bloodGroupIndex()
     {
-        return view('admin.manage.bloodGroupIndex');
+        $blood_groups = BloodGroup::latest('id')->paginate(10);
+        return view('admin.manage.bloodGroupIndex')->with(compact('blood_groups'));
     }
 
     public function bloodGroupList(Request $request)
@@ -741,7 +745,8 @@ class ManageController extends Controller
 
     public function pattiIndex()
     {
-        return view('admin.manage.pattiIndex');
+        $patti = Patti::latest('id')->paginate(10);
+        return view('admin.manage.pattiIndex')->with(compact('patti'));
     }
 
     public function pattiList(Request $request)
@@ -784,7 +789,8 @@ class ManageController extends Controller
 
     public function businessCategoryIndex()
     {
-        return view('admin.manage.businessCategoryIndex');
+        $business_category = BusinessCategory::latest('id')->paginate(10);
+        return view('admin.manage.businessCategoryIndex')->with(compact('business_category'));
     }
 
     public function businessCategoryList(Request $request)
@@ -938,5 +944,175 @@ class ManageController extends Controller
             UtilitiesSubCategory::destroy($id);
         }
         return back();
+    }
+
+    public function blood_group_ajax_search(Request $request)
+    {
+        if(empty($request->search))
+        {
+            return "no";
+        }
+
+        $blood_groups = BloodGroup::where('name','LIKE','%'.$request->search.'%')->get();
+
+        $html = '';
+
+        foreach ($blood_groups as $row) {
+            $html .= '<tr>';
+            $html .= '<td>' . $row->id . '</td>';
+            $html .= '<td>' . $row->name . '</td>';
+            $html .= '<td>';
+            $html .= '<span class="action">';
+
+            if (Auth::user()->is_update) {
+                $html .= '<a href="javascript:void(0)" class="edit" data-id="'.$row->id.'"  data-name="'.$row->name.'"><i class="fa-solid text-success fa-pen-to-square"></i></a>&nbsp;';
+            }
+
+            if (Auth::user()->is_delete) {
+                $html .= '<a href="' . url('/admin/manage/delete/blood-group/' . $row->id) . '" onclick="return confirm(\'Are you sure?\')"><i class="fa-solid fa-trash text-danger"></i></a>&nbsp;';
+            }
+
+            $html .= '</span>';
+            $html .= '</td>';
+            $html .= '</tr>';
+        }
+
+        return $html;
+    }
+
+    public function patti_ajax_search(Request $request)
+    {
+        if(empty($request->search))
+        {
+            return "no";
+        }
+
+        $Patti = Patti::where('name','LIKE','%'.$request->search.'%')->get();
+
+        $html = '';
+
+        foreach ($Patti as $row) {
+            $html .= '<tr>';
+            $html .= '<td>' . $row->id . '</td>';
+            $html .= '<td>' . $row->name . '</td>';
+            $html .= '<td>';
+            $html .= '<span class="action">';
+
+            if (Auth::user()->is_update) {
+                $html .= '<a href="javascript:void(0)" class="edit" data-id="'.$row->id.'"  data-name="'.$row->name.'"><i class="fa-solid text-success fa-pen-to-square"></i></a>&nbsp;';
+            }
+
+            if (Auth::user()->is_delete) {
+                $html .= '<a href="' . url('/admin/manage/delete/patti/' . $row->id) . '" onclick="return confirm(\'Are you sure?\')"><i class="fa-solid fa-trash text-danger"></i></a>&nbsp;';
+            }
+
+            $html .= '</span>';
+            $html .= '</td>';
+            $html .= '</tr>';
+        }
+
+        return $html;
+    }
+
+    public function business_category_ajax_search(Request $request)
+    {
+        if(empty($request->search))
+        {
+            return "no";
+        }
+
+        $BusinessCategory = BusinessCategory::where('name','LIKE','%'.$request->search.'%')->get();
+
+        $html = '';
+
+        foreach ($BusinessCategory as $row) {
+            $html .= '<tr>';
+            $html .= '<td>' . $row->id . '</td>';
+            $html .= '<td>' . $row->name . '</td>';
+            $html .= '<td>';
+            $html .= '<span class="action">';
+
+            if (Auth::user()->is_update) {
+                $html .= '<a href="javascript:void(0)" class="edit" data-id="'.$row->id.'"  data-name="'.$row->name.'"><i class="fa-solid text-success fa-pen-to-square"></i></a>&nbsp;';
+            }
+
+            if (Auth::user()->is_delete) {
+                $html .= '<a href="' . url('/admin/manage/delete/business_category/' . $row->id) . '" onclick="return confirm(\'Are you sure?\')"><i class="fa-solid fa-trash text-danger"></i></a>&nbsp;';
+            }
+
+            $html .= '</span>';
+            $html .= '</td>';
+            $html .= '</tr>';
+        }
+
+        return $html;
+    }
+
+
+    public function utilities_category_ajax_search(Request $request)
+    {
+        if(empty($request->search))
+        {
+            return "no";
+        }
+        $UtilitiesCategory = UtilitiesCategory::where('name','LIKE','%'.$request->search.'%')->get();
+
+        $html = '';
+
+        foreach ($UtilitiesCategory as $row) {
+            $html .= '<tr>';
+            $html .= '<td>' . $row->id . '</td>';
+            $html .= '<td>' . $row->name . '</td>';
+            $html .= '<td>';
+            $html .= '<span class="action">';
+
+            if (Auth::user()->is_update) {
+                $html .= '<a href="javascript:void(0)" class="edit" data-id="'.$row->id.'"  data-name="'.$row->name.'"><i class="fa-solid text-success fa-pen-to-square"></i></a>&nbsp;';
+            }
+
+            if (Auth::user()->is_delete) {
+                $html .= '<a href="' . url('/admin/manage/delete/utilities_category/' . $row->id) . '" onclick="return confirm(\'Are you sure?\')"><i class="fa-solid fa-trash text-danger"></i></a>&nbsp;';
+            }
+
+            $html .= '</span>';
+            $html .= '</td>';
+            $html .= '</tr>';
+        }
+
+        return $html;
+    }
+
+    public function utilities_sub_category_ajax_search(Request $request)
+    {
+        if(empty($request->search))
+        {
+            return "no";
+        }
+        $UtilitiesSubCategory = UtilitiesSubCategory::where('name','LIKE','%'.$request->search.'%')->get();
+
+        $html = '';
+
+        foreach ($UtilitiesSubCategory as $row) {
+            $html .= '<tr>';
+            $html .= '<td>' . $row->id . '</td>';
+            $html .= '<td>' . $row->category->name . '</td>';
+            $html .= '<td>' . $row->name . '</td>';
+            $html .= '<td>';
+            $html .= '<span class="action">';
+
+            if (Auth::user()->is_update) {
+                $html .= '<a href="javascript:void(0)" class="edit" data-id="'.$row->id.'" data-parent_id="'.$row->parent_id.'" data-name="'.$row->name.'"><i class="fa-solid text-success fa-pen-to-square"></i></a>&nbsp;';
+            }
+
+            if (Auth::user()->is_delete) {
+                $html .= '<a href="' . url('/admin/manage/delete/utilities_category/' . $row->id) . '" onclick="return confirm(\'Are you sure?\')"><i class="fa-solid fa-trash text-danger"></i></a>&nbsp;';
+            }
+
+            $html .= '</span>';
+            $html .= '</td>';
+            $html .= '</tr>';
+        }
+
+        return $html;
     }
 }

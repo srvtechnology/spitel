@@ -164,6 +164,7 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
         // Blood Group
         Route::group(['prefix' => 'blood-group'], function () {
             Route::get('/', [ManageController::class, 'bloodGroupIndex'])->name('manage.blood_group.index');
+            Route::post('/ajax-search', [ManageController::class, 'blood_group_ajax_search'])->name('manage.blood_group.ajax_search');
             Route::get('/list', [ManageController::class, 'bloodGroupList'])->name('manage.blood_group.list');
             Route::post('/store', [ManageController::class, 'bloodGroupStore'])->name('manage.blood_group.store');
         });
@@ -171,6 +172,7 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
         // Patti
         Route::group(['prefix' => 'patti'], function () {
             Route::get('/', [ManageController::class, 'pattiIndex'])->name('manage.patti.index');
+            Route::post('/ajax-search', [ManageController::class, 'patti_ajax_search'])->name('manage.patti.ajax_search');
             Route::get('/list', [ManageController::class, 'pattiList'])->name('manage.patti.list');
             Route::post('/store', [ManageController::class, 'pattiStore'])->name('manage.patti.store');
         });
@@ -194,6 +196,7 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
         // Business Category
         Route::group(['prefix' => 'business-category'], function () {
             Route::get('/', [ManageController::class, 'businessCategoryIndex'])->name('manage.business_category.index');
+            Route::post('/ajax-search', [ManageController::class, 'business_category_ajax_search'])->name('manage.business_category.ajax_search');
             Route::get('/list', [ManageController::class, 'businessCategoryList'])->name('manage.business_category.list');
             Route::post('/store', [ManageController::class, 'businessCategoryStore'])->name('manage.business_category.store');
         });
@@ -217,6 +220,7 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
         // utilities category
         Route::group(['prefix' => 'utilities-category'], function () {
             Route::get('/', [ManageController::class, 'utilitesCategoryIndex'])->name('manage.utilitesCategory.index');
+            Route::post('/ajax-search', [ManageController::class, 'utilities_category_ajax_search'])->name('manage.utilities_category.ajax_search');
             Route::get('/list', [ManageController::class, 'utilitesCategoryList'])->name('manage.utilitesCategory.list');
             Route::post('/store', [ManageController::class, 'utilitesCategoryStore'])->name('manage.utilitesCategory.store');
         });
@@ -224,6 +228,7 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
         // utilities sub category
         Route::group(['prefix' => 'utilities-sub-category'], function () {
             Route::get('/', [ManageController::class, 'utilitesSubCategoryIndex'])->name('manage.utilitesSubCategory.index');
+            Route::post('/ajax-search', [ManageController::class, 'utilities_sub_category_ajax_search'])->name('manage.utilities_sub_category.ajax_search');
             Route::get('/list', [ManageController::class, 'utilitesSubCategoryList'])->name('manage.utilitesSubCategory.list');
             Route::post('/store', [ManageController::class, 'utilitesSubCategoryStore'])->name('manage.utilitesSubCategory.store');
         });
@@ -279,7 +284,7 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
     // News category
     Route::group(['prefix' => 'news-category'], function () {
         Route::get('/', [NewsCategoryController::class, 'index'])->name('news-category.view');
-
+        Route::post('/ajax-search', [NewsCategoryController::class, 'news_category_ajax_search'])->name('news_category.ajax_search');
         Route::get('/add/{id?}', [NewsCategoryController::class, 'add'])->name('news-category.add');
         Route::post('/create', [NewsCategoryController::class, 'store'])->name('news-category.store');
         Route::get('/delete/{id}', [NewsCategoryController::class, 'delete'])->name('news-category.delete');
@@ -289,6 +294,7 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
     // News Sub category
     Route::group(['prefix' => 'news-sub-category'], function () {
         Route::get('/', [NewsSubCategoryController::class, 'index'])->name('news-sub-category.view');
+        Route::post('/ajax-search', [NewsSubCategoryController::class, 'news_sub_category_ajax_search'])->name('news_sub_category.ajax_search');
         Route::get('/add/{id?}', [NewsSubCategoryController::class, 'add'])->name('news-sub-category.add');
         Route::post('/create', [NewsSubCategoryController::class, 'store'])->name('news-sub-category.store');
         Route::get('/delete/{id}', [NewsSubCategoryController::class, 'delete'])->name('news-sub-category.delete');

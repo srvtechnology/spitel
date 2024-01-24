@@ -31,7 +31,10 @@
                         <a href="{{ route('news-sub-category.add') }}" class="btn btn-success">+ Add news sub category</a>
                     </div>
                     @endif
-                    <table class="table table-hover">
+                    <div class="col-md-4 float-right">
+                        <input type="text" class="form-control" name="search" id="custom_search" placeholder="Search...">
+                    </div>
+                    <table class="table realtionship_datatable">
                         <thead>
                             <tr>
                                 <th>Sr#</th>
@@ -45,7 +48,7 @@
                                 @endif
                             </tr>
                         </thead>
-                        <tbody>
+                        <tbody class="realtionship_datatable_tbody">
                             @php($city = (isset($_GET['city']) && $_GET['city'] != '') ? $_GET['city'] : "")
                             @php($i = $news_sub_category->firstItem())
                             @foreach($news_sub_category as $c)
@@ -78,7 +81,7 @@
                             @endforeach
                         </tbody>
                     </table>
-                    <div class="d-flex mt-3 justify-content-center">
+                    <div class="d-flex mt-3 justify-content-center" id="laravel_pagination">
                         {{ $news_sub_category->appends($_GET)->links("pagination::bootstrap-4"); }}
                     </div>
                 </div>
@@ -98,9 +101,39 @@
         $(".list-unstyled").addClass('in');
         $(".news-sub-cat-link").addClass('active');
 
-        $(".table-hover").DataTable({
-            "bPaginate": false,
-            order: [[ 2, 'asc' ]]
+        $('.realtionship_datatable').DataTable({
+            searching:false,
+            paging:false,
+        });
+
+        $("#custom_search").on("keyup", function () {
+            var search_title = $(this).val();
+            if(search_title == null)
+            {
+                return false;
+            }
+            $(".realtionship_datatable_tbody").html('Loading.....');
+            $("#laravel_pagination").addClass("d-none");
+            $.ajax({
+                url: "{{ route('news_sub_category.ajax_search') }}",
+                method: "POST",
+                data: {
+                    _token : "{{ csrf_token() }}",
+                    search: search_title
+                },
+                success: function (response) {
+                    if (response) {
+                        $(".realtionship_datatable_tbody").html('');
+                        $(".realtionship_datatable_tbody").html(response);
+                    }
+                    if(response == 'no'){
+                        location.reload();
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.error(xhr, status, error);
+                }
+            });
         });
     });
 </script>

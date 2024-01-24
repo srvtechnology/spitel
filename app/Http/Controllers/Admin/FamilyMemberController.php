@@ -23,11 +23,7 @@ class FamilyMemberController extends Controller
 
             $city = "";
             $family_member = FamilyMember::with(['panth', 'relationship', 'blood_group'])
-                                        ->whereNotNull('name');
-
-            if (request('cust_id') && request('cust_id') != '') {
-                $family_member = $family_member->where('cust_id', request('cust_id'));
-            }
+                ->where('cust_id', $customer_id)->whereNotNull('name');
 
             if (request('city_id') && request('city_id') != '') {
                 $family_member = $family_member->whereHas('customer', function($query) use ($request){
