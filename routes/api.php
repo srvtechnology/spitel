@@ -128,4 +128,5 @@ Route::get('/get-expiry', [ExpiryController::class, 'getExpiry']);
 Route::get('/get-customer', [CustomerController::class, 'getCustomer']);
 Route::get('/get-customer-all', [CustomerController::class, 'getAllCustomer']);
 //Route::get('/get-customer/{id}', [CustomerController::class, 'getCustomer']);
+Route::get('set-engagements-all-city', [CustomerController::class, 'setEngagementsCity']);
 

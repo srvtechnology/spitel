@@ -83,7 +83,7 @@ class NewsController extends Controller
         if ($request->has('sub_category_id') && $request->sub_category_id != "") {
             $news = $news->where('sub_category_id', $request->sub_category_id);
         }
-        $news = $news->orderBy('name', 'asc')->get();
+        $news = $news->with('category:id,name','sub_category:id,name')->orderBy('name', 'asc')->get();
 
     	return response()->json($news);
     }

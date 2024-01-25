@@ -363,4 +363,36 @@ class CustomerController extends Controller
         return EngagementResource::collection($engagements);
     }
 
+
+    public function setEngagementsCity()
+    {
+        $engagements = Engagement::all();
+        foreach($engagements as $engagement)
+        {
+            $bride_current_city_match = preg_match_all('/\d+/', $engagement->bride_current_city, $matches);
+            if($bride_current_city_match == 1)
+            {
+                $engagement->bride_current_city = City::find($engagement->bride_current_city)->city;
+            }
+            $bride_native_city_match = preg_match_all('/\d+/', $engagement->bride_native_city, $matches);
+            if($bride_native_city_match == 1)
+            {
+                $engagement->bride_native_city = City::find($engagement->bride_native_city)->city;
+            }
+            $groom_current_city_match = preg_match_all('/\d+/', $engagement->groom_current_city, $matches);
+            if($groom_current_city_match == 1)
+            {
+                $engagement->groom_current_city = City::find($engagement->groom_current_city)->city;
+            }
+            $groom_native_city_match = preg_match_all('/\d+/', $engagement->groom_native_city, $matches);
+            if($groom_native_city_match == 1)
+            {
+                $engagement->groom_native_city = City::find($engagement->groom_native_city)->city;
+            }
+
+            $engagement->save();
+        }
+
+        return "Done";
+    }
 }

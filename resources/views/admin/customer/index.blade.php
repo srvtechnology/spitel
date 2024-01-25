@@ -226,86 +226,16 @@
         $(".sidebar-link").removeClass('active');
         $(".customer-link").addClass('active');
 
-        $("#customer_search").on("keyup", function () {
-            var search_title = $(this).val();
-            $.ajax({
-                url: "{{ route('customer.customer_ajax_search') }}",
-                method: "POST",
-                data: {
-                    _token : "{{ csrf_token() }}",
-                    search: search_title
-                },
-                success: function (response) {
-                    $("#customer_tbody").html('');
-                    if(response == "no")
-                    {
-                        location.reload();
-                    }
-                    if (response.length > 0) {
-                        $("#laravel_pagination").addClass("d-none");
-                        $.each(response, function (index, value) {
-                            var statusBadge = null;
-                            var customerAvatar = null;
-                            var action_btn = null;
-
-                            if (value.system_status == 1) {
-                                statusBadge = `<span class='badge badge-success' title='From:- ${value.start} End:- ${value.end}'>Approved</span>`;
-                            } else if (value.system_status == 0) {
-                                statusBadge = `<span class='badge badge-info'>Pending</span>`;
-                            } else {
-                                statusBadge = `<span class='badge badge-danger' title='${value.comment}'>Reject</span>`;
-                            }
-
-                            if (value.avtar_url != null) {
-                                customerAvatar = `<img src="${value.avtar_url}" alt='Avatar' width='50' style='border-radius: 50%;'>`;
-                            } else {
-                                customerAvatar = `-`;
-                            }
-
-                            if (value.is_update) {
-                                action_btn = `<a href="${value.is_update_url}"><i class='fa-solid text-success fa-pen-to-square'></i></a>&nbsp;`;
-                            }
-
-                            if (value.is_delete) {
-                                action_btn += `<a href="${value.is_delete_url}" onclick='return confirm("Are you sure?")'><i class='fa-solid fa-trash text-danger'></i></a>&nbsp;`;
-                            }
-
-                            if (value.is_view) {
-                                action_btn += `<a href="${value.is_view_url}"><i class='fa-solid fa-eye text-primary'></i></a>&nbsp;`;
-                            }
-
-                            $("#customer_tbody").append(`
-                                <tr>
-                                    <td><input type='checkbox' name='customer_ids[]' class='customer_ids' value='${value.id}'></td>
-                                    <td>${value.id}</td>
-                                    <td>${customerAvatar}</td>
-                                    <td>${value.first_name} ${value.father_husband_name} ${value.surname?.name }</td>
-                                    <td>${value.phone_no}</td>
-                                    <td>${value.city? value.city.city : ""}</td>
-                                    <td>${value.native_city? value.native_city.city : ""}</td>
-                                    <td>${value.company_firm_name}</td>
-                                    <td>${value.date_of_expired ?? "-"}</td>
-                                    <td>${statusBadge}</td>
-                                    <td><a href="${value.view_family_member}" class='btn btn-dark btn-sm'>View Family Member</a></td>
-                                    <td><a href="${value.add_family_member}" class='btn btn-warning btn-sm'>Add Family Member</a></td>
-                                    <td>
-                                        <span class='action'>
-                                            ${action_btn}
-                                        </span>
-                                    </td>
-                                </tr>
-                            `);
-                        });
-                    }
-
-
-
-
-                },
-                error: function (xhr, status, error) {
-                    console.error(xhr, status, error);
+        $("#customer_search").on("keypress", function (event) {
+            if (event.which === 13) {
+                if($(this).val() == "")
+                {
+                    location.reload();
                 }
-            });
+                event.preventDefault();
+                search();
+            }
+
         });
 
 
@@ -450,5 +380,87 @@
             $("#reason_modal").modal('hide');
         });
     });
+    function search()
+    {
+        var search_title = $("#customer_search").val();
+            $.ajax({
+                url: "{{ route('customer.customer_ajax_search') }}",
+                method: "POST",
+                data: {
+                    _token : "{{ csrf_token() }}",
+                    search: search_title
+                },
+                success: function (response) {
+                    $("#customer_tbody").html('');
+                    if(response == "no")
+                    {
+                        location.reload();
+                    }
+                    if (response.length > 0) {
+                        $("#laravel_pagination").addClass("d-none");
+                        $.each(response, function (index, value) {
+                            var statusBadge = null;
+                            var customerAvatar = null;
+                            var action_btn = null;
+
+                            if (value.system_status == 1) {
+                                statusBadge = `<span class='badge badge-success' title='From:- ${value.start} End:- ${value.end}'>Approved</span>`;
+                            } else if (value.system_status == 0) {
+                                statusBadge = `<span class='badge badge-info'>Pending</span>`;
+                            } else {
+                                statusBadge = `<span class='badge badge-danger' title='${value.comment}'>Reject</span>`;
+                            }
+
+                            if (value.avtar_url != null) {
+                                customerAvatar = `<img src="${value.avtar_url}" alt='Avatar' width='50' style='border-radius: 50%;'>`;
+                            } else {
+                                customerAvatar = `-`;
+                            }
+
+                            if (value.is_update) {
+                                action_btn = `<a href="${value.is_update_url}"><i class='fa-solid text-success fa-pen-to-square'></i></a>&nbsp;`;
+                            }
+
+                            if (value.is_delete) {
+                                action_btn += `<a href="${value.is_delete_url}" onclick='return confirm("Are you sure?")'><i class='fa-solid fa-trash text-danger'></i></a>&nbsp;`;
+                            }
+
+                            if (value.is_view) {
+                                action_btn += `<a href="${value.is_view_url}"><i class='fa-solid fa-eye text-primary'></i></a>&nbsp;`;
+                            }
+
+                            $("#customer_tbody").append(`
+                                <tr>
+                                    <td><input type='checkbox' name='customer_ids[]' class='customer_ids' value='${value.id}'></td>
+                                    <td>${value.id}</td>
+                                    <td>${customerAvatar}</td>
+                                    <td>${value.first_name} ${value.father_husband_name} ${value.surname?.name }</td>
+                                    <td>${value.phone_no}</td>
+                                    <td>${value.city? value.city.city : ""}</td>
+                                    <td>${value.native_city? value.native_city.city : ""}</td>
+                                    <td>${value.company_firm_name}</td>
+                                    <td>${value.date_of_expired ?? "-"}</td>
+                                    <td>${statusBadge}</td>
+                                    <td><a href="${value.view_family_member}" class='btn btn-dark btn-sm'>View Family Member</a></td>
+                                    <td><a href="${value.add_family_member}" class='btn btn-warning btn-sm'>Add Family Member</a></td>
+                                    <td>
+                                        <span class='action'>
+                                            ${action_btn}
+                                        </span>
+                                    </td>
+                                </tr>
+                            `);
+                        });
+                    }
+
+
+
+
+                },
+                error: function (xhr, status, error) {
+                    console.error(xhr, status, error);
+                }
+            });
+    }
 </script>
 @endsection
