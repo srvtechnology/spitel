@@ -30,7 +30,7 @@ class FamilyMemberController extends Controller
 			$msg = "Family member updated successfully";
 		}
 		//dd($request->allow_matrimony);
-		$family_member->avtar = $request->avtar_url;		
+		$family_member->avtar = $request->avtar_url;
     	$family_member->cust_id = $request->user()->id;
 		$family_member->panth_id = $request->panth_id;
 		$family_member->name = $request->name;
@@ -50,20 +50,18 @@ class FamilyMemberController extends Controller
         $family_member->naniyal_gautra_id = $request->naniyal_gautra_id;
 		$family_member->save();
 
-        if ($family_member->status == 3) {
-            $news = new News;
-            $news->banner_url = $family_member->avtar;
-//            $news->category_id = 10;
-//            $news->sub_category_id = 9;
-            $news->category_id = 9;
-            $news->sub_category_id = 6;
-            $news->customer_id = 0;
-            $news->name = $family_member->name;
-            $news->date = $request->date_of_expire;
-            $news->description = $request->about;
-            $news->city_id = $family_member->customer->city_id;
-            $news->save();
-        }
+        // if ($family_member->status == 3) {
+        //     $news = new News;
+        //     $news->banner_url = $family_member->avtar;
+        //     $news->category_id = 9;
+        //     $news->sub_category_id = 6;
+        //     $news->customer_id = 0;
+        //     $news->name = $family_member->name;
+        //     $news->date = $request->date_of_expire;
+        //     $news->description = $request->about;
+        //     $news->city_id = $family_member->customer->city_id;
+        //     $news->save();
+        // }
 
         return response()->json([
         	'message' => $msg

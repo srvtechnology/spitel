@@ -28,35 +28,35 @@ class NewsController extends Controller
     public function index(Request $request)
     {
         $family_members = FamilyMember::all();
-        foreach($family_members as $family_member)
-        {
-            if ($family_member->status == 3) {
-                $cur_date = date("m-d");
-                $family_mem_expiry_date = date("m-d",strtotime($family_member->date_of_expire));
-                if($cur_date >= $family_mem_expiry_date)
-                {
-                    $family_memberId = News::where('family_member_id', $family_member->id)->first();
-                    if(!empty($family_memberId) AND date("Y",strtotime($family_memberId->created_at)) <= date("Y"))
-                    {
-                        $news = News::where('family_member_id', $family_member->id)->first();
-                    }
-                    else
-                    {
-                        $news = new News;
-                    }
-                    $news->banner_url = $family_member->avtar;
-                    $news->category_id = 9;
-                    $news->sub_category_id = 6;
-                    $news->customer_id = 0;
-                    $news->name = $family_member->name;
-                    $news->date = $request->date_of_expire;
-                    $news->description = $request->about;
-                    $news->city_id = $family_member->customer->city_id;
-                    $news->family_member_id = $family_member->id;
-                    $news->save();
-                }
-            }
-        }
+        // foreach($family_members as $family_member)
+        // {
+        //     if ($family_member->status == 3) {
+        //         $cur_date = date("m-d");
+        //         $family_mem_expiry_date = date("m-d",strtotime($family_member->date_of_expire));
+        //         if($cur_date >= $family_mem_expiry_date)
+        //         {
+        //             $family_memberId = News::where('family_member_id', $family_member->id)->first();
+        //             if(!empty($family_memberId) AND date("Y",strtotime($family_memberId->created_at)) <= date("Y"))
+        //             {
+        //                 $news = News::where('family_member_id', $family_member->id)->first();
+        //             }
+        //             else
+        //             {
+        //                 $news = new News;
+        //             }
+        //             $news->banner_url = $family_member->avtar;
+        //             $news->category_id = 9;
+        //             $news->sub_category_id = 6;
+        //             $news->customer_id = 0;
+        //             $news->name = $family_member->name;
+        //             $news->date = $request->date_of_expire;
+        //             $news->description = $request->about;
+        //             $news->city_id = $family_member->customer->city_id;
+        //             $news->family_member_id = $family_member->id;
+        //             $news->save();
+        //         }
+        //     }
+        // }
 		$city = "";
         $news = new News;
 
