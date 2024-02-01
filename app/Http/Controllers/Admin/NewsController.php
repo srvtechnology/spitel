@@ -46,10 +46,27 @@ class NewsController extends Controller
 
     public function index()
     {
+        if(!empty(request('news_category_id')) OR !empty(request('news_sub_category_id')))
+        {
+            $news = News::orderBy('id', 'DESC')
+            ->when(request('news_category_id'), function ($query) {
+                $query->where('category_id', request('news_category_id'));
+            })
+            ->when(request('news_sub_category_id'), function ($query) {
+                $query->where('category_id', request('news_sub_category_id'));
+            })
+            ->paginate(10);
+
+        }
+        else
+        {
+            $news = News::paginate(10);
+        }
+
         $news_category = NewsCategory::select('id', 'name')->get();
         $news_sub_category = NewsSubCategory::select('id', 'name')->get();
 
-        $news = News::paginate(10);
+
 
         return view('admin.news.index', compact('news_category', 'news_sub_category','news'));
     }

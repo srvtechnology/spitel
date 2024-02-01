@@ -47,13 +47,13 @@
                     <select id="news_category_id" name="news_category_id">
                         <option value="">News Category</option>
                         @foreach($news_category as $c)
-                        <option value="{{$c->id}}">{{$c->name}}</option>
+                        <option value="{{$c->id}}" @if(!empty(request('news_category_id')) AND request('news_category_id') == $c->id ) selected @endif>{{$c->name}}</option>
                         @endforeach
                     </select>
                     <select id="news_sub_category_id" name="news_sub_category_id">
                         <option value="">News sub Category</option>
                         @foreach($news_sub_category as $c)
-                        <option value="{{$c->id}}">{{$c->name}}</option>
+                        <option value="{{$c->id}}" @if(!empty(request('news_sub_category_id')) AND request('news_sub_category_id') == $c->id ) selected @endif>{{$c->name}}</option>
                         @endforeach
                     </select>
                     <button class="btn btn-sm btn-primary search-btn" type="button" id="search-btn">Search</button>
@@ -226,7 +226,9 @@
         $("#search-btn").click(function(){
             category_id = $("#news_category_id").val();
             sub_category_id = $("#news_sub_category_id").val();
-            table.draw();
+            $("#news_action").attr("action","");
+            $("#news_action").attr("method","GET");
+            $("#news_action").submit();
         });
 
         $('.customer-datatable').DataTable({
